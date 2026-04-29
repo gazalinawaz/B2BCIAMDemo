@@ -86,12 +86,70 @@ function Dashboard() {
         margin: '0 auto',
         padding: '2rem 2rem 4rem'
       }}>
-        <h2 style={{ fontSize: '1.875rem', fontWeight: '700', color: '#111827', marginBottom: '0.5rem' }}>
-          Account Overview
-        </h2>
-        <p style={{ fontSize: '1rem', color: '#6b7280', marginBottom: '2rem' }}>
-          Manage your broadband service and account settings
-        </p>
+        <div style={{ marginBottom: '2rem' }}>
+          <h2 style={{ fontSize: '1.875rem', fontWeight: '700', color: '#111827', marginBottom: '0.5rem' }}>
+            Welcome, {user?.name || user?.given_name || user?.email?.split('@')[0] || 'User'}!
+          </h2>
+          <p style={{ fontSize: '1rem', color: '#6b7280' }}>
+            Manage your broadband service and account settings
+          </p>
+        </div>
+
+        {/* User Profile Card */}
+        <div style={{
+          background: 'white',
+          borderRadius: '8px',
+          padding: '1.5rem',
+          border: '1px solid #e5e7eb',
+          marginBottom: '2rem'
+        }}>
+          <h3 style={{
+            fontSize: '1.125rem',
+            fontWeight: '600',
+            color: '#111827',
+            marginBottom: '1.25rem'
+          }}>
+            Profile Information
+          </h3>
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+            gap: '1.5rem'
+          }}>
+            {user?.name && (
+              <div>
+                <p style={{ color: '#6b7280', fontSize: '0.875rem', marginBottom: '0.25rem' }}>Full Name</p>
+                <p style={{ color: '#111827', fontSize: '1.1rem', fontWeight: '600' }}>
+                  {user.name}
+                </p>
+              </div>
+            )}
+            {user?.email && (
+              <div>
+                <p style={{ color: '#6b7280', fontSize: '0.875rem', marginBottom: '0.25rem' }}>Email Address</p>
+                <p style={{ color: '#111827', fontSize: '1.1rem', fontWeight: '600' }}>
+                  {user.email}
+                </p>
+              </div>
+            )}
+            {user?.sub && (
+              <div>
+                <p style={{ color: '#6b7280', fontSize: '0.875rem', marginBottom: '0.25rem' }}>User ID</p>
+                <p style={{ color: '#111827', fontSize: '0.875rem', fontWeight: '600', fontFamily: 'monospace' }}>
+                  {user.sub.substring(0, 30)}...
+                </p>
+              </div>
+            )}
+            {user?.realm && (
+              <div>
+                <p style={{ color: '#6b7280', fontSize: '0.875rem', marginBottom: '0.25rem' }}>Realm</p>
+                <p style={{ color: '#111827', fontSize: '1.1rem', fontWeight: '600' }}>
+                  {user.realm}
+                </p>
+              </div>
+            )}
+          </div>
+        </div>
         {/* Stats Grid */}
         <div style={{
           display: 'grid',
@@ -135,61 +193,41 @@ function Dashboard() {
           ))}
         </div>
 
-        {/* Account Info Card */}
-        <div style={{
+        {/* Token Information (for debugging) */}
+        <details style={{
           background: 'white',
           borderRadius: '8px',
           padding: '1.5rem',
           border: '1px solid #e5e7eb',
-          marginBottom: '1.5rem'
+          marginBottom: '1.5rem',
+          cursor: 'pointer'
         }}>
-          <h3 style={{
+          <summary style={{
             fontSize: '1.125rem',
             fontWeight: '600',
             color: '#111827',
-            marginBottom: '1.25rem'
+            marginBottom: '1rem'
           }}>
-            Account Information
-          </h3>
+            Token Details (Click to expand)
+          </summary>
           <div style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
-            gap: '1.5rem'
+            background: '#f9fafb',
+            padding: '1rem',
+            borderRadius: '6px',
+            marginTop: '1rem'
           }}>
-            <div>
-              <p style={{ color: '#6b7280', fontSize: '0.875rem', marginBottom: '0.25rem' }}>Email Address</p>
-              <p style={{ color: '#1f2937', fontSize: '1.1rem', fontWeight: '600' }}>
-                {user?.email || 'N/A'}
-              </p>
-            </div>
-            <div>
-              <p style={{ color: '#6b7280', fontSize: '0.875rem', marginBottom: '0.25rem' }}>User ID</p>
-              <p style={{ color: '#1f2937', fontSize: '1.1rem', fontWeight: '600', fontFamily: 'monospace' }}>
-                {user?.sub?.substring(0, 20) || 'N/A'}...
-              </p>
-            </div>
-            <div>
-              <p style={{ color: '#6b7280', fontSize: '0.875rem', marginBottom: '0.25rem' }}>Account Status</p>
-              <p style={{
-                color: '#10b981',
-                fontSize: '1.1rem',
-                fontWeight: '600',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '0.5rem'
-              }}>
-                <span style={{
-                  width: '8px',
-                  height: '8px',
-                  background: '#10b981',
-                  borderRadius: '50%',
-                  display: 'inline-block'
-                }}></span>
-                Active
-              </p>
-            </div>
+            <pre style={{
+              fontSize: '0.75rem',
+              fontFamily: 'monospace',
+              whiteSpace: 'pre-wrap',
+              wordBreak: 'break-all',
+              color: '#374151',
+              margin: 0
+            }}>
+              {JSON.stringify(user, null, 2)}
+            </pre>
           </div>
-        </div>
+        </details>
 
         {/* Quick Actions */}
         <div style={{
