@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { TokenManager, UserManager, FRAuth, TokenStorage } from '@forgerock/javascript-sdk';
+import { TokenManager, UserManager, TokenStorage, Config } from '@forgerock/javascript-sdk';
 
 const AuthContext = createContext(null);
 
@@ -9,9 +9,8 @@ export function AuthProvider({ children }) {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   useEffect(() => {
-    checkAuth();
-    // Handle OAuth callback (implicit flow returns tokens in URL hash)
     handleCallback();
+    checkAuth();
   }, []);
 
   const handleCallback = async () => {
@@ -25,11 +24,9 @@ export function AuthProvider({ children }) {
         const idToken = params.get('id_token');
         
         if (accessToken && idToken) {
-          // Store tokens
-          TokenStorage.set({
-            accessToken,
-            idToken,
-          });
+          // Store tokens in sessionStorage
+          sessionStorage.setItem('accessToken', accessToken);
+          sessionStorage.setItem('idToken', idToken);
           
           // Clean URL
           window.history.replaceState(null, '', window.location.pathname);
@@ -45,43 +42,60 @@ export function AuthProvider({ children }) {
 
   const checkAuth = async () => {
     try {
-      const tokens = await TokenManager.getTokens();
-      if (tokens && tokens.accessToken) {
-        const userInfo = await UserManager.getCurrentUser();
-        setUser(userInfo);
+      const accessToken = sessionStorage.getItem('accessToken');
+      const idToken = sessionStorage.getItem('idToken');
+      
+      if (accessToken && idToken) {
+        // Decode ID token to get user info (simple base64 decode)
+        const payload = JSON.parse(atob(idToken.split('.')[1]));
+        setUser(payload);
         setIsAuthenticated(true);
       }
     } catch (error) {
-      console.log('Not authenticated');
+      console.log('Not authenticated', error);
     } finally {
       setIsLoading(false);
     }
   };
 
-  const login = async () => {
+  const login = () => {
     try {
-      setIsLoading(true);
-      // Redirect to ForgeRock login with implicit flow
-      await FRAuth.login({
-        query: {
-          response_type: 'id_token token',
-        },
-      });
+      const config = Config.get();
+      const authUrl = new URL(`${config.serverConfig.baseUrl}/oauth2/realms/root/realms/${config.realmPath}/authorize`);
+      
+      authUrl.searchParams.set('client_id', config.clientId);
+      authUrl.searchParams.set('response_type', 'id_token token');
+      authUrl.searchParams.set('scope', config.scope);
+      authUrl.searchParams.set('redirect_uri', config.redirectUri);
+      authUrl.searchParams.set('nonce', Math.random().toString(36).substring(7));
+      authUrl.searchParams.set('state', Math.random().toString(36).substring(7));
+      
+      // Redirect to PingOne AIC login
+      window.location.href = authUrl.toString();
     } catch (error) {
       console.error('Login error:', error);
       setIsLoading(false);
     }
   };
 
-  const logout = async () => {
+  const logout = () => {
     try {
-      await FRAuth.logout();
-      TokenStorage.remove();
+      const config = Config.get();
+      
+      // Clear tokens
+      sessionStorage.removeItem('accessToken');
+      sessionStorage.removeItem('idToken');
       setUser(null);
       setIsAuthenticated(false);
-      window.location.href = '/';
+      
+      // Redirect to PingOne AIC logout
+      const logoutUrl = `${config.serverConfig.baseUrl}/oauth2/realms/root/realms/${config.realmPath}/connect/endSession?id_token_hint=${sessionStorage.getItem('idToken')}&post_logout_redirect_uri=${config.redirectUri}`;
+      window.location.href = logoutUrl;
     } catch (error) {
       console.error('Logout error:', error);
+      // Fallback: just clear and redirect
+      sessionStorage.clear();
+      window.location.href = '/';
     }
   };
 
