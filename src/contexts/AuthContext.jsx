@@ -69,10 +69,42 @@ export function AuthProvider({ children }) {
       console.log('Checking auth - Access token:', !!accessToken, 'ID token:', !!idToken);
       
       if (accessToken && idToken) {
-        // Decode ID token to get user info (simple base64 decode)
+        // Decode ID token to get basic user info
         const payload = JSON.parse(atob(idToken.split('.')[1]));
-        console.log('User payload:', payload);
-        setUser(payload);
+        console.log('User payload from ID token:', payload);
+        
+        // Fetch additional user info from UserInfo endpoint
+        try {
+          const config = Config.get();
+          const baseUrl = config.serverConfig.baseUrl.replace(/\/$/, '');
+          const userInfoUrl = `${baseUrl}/am/oauth2/realms/${config.realmPath}/userinfo`;
+          
+          console.log('Fetching user info from:', userInfoUrl);
+          
+          const response = await fetch(userInfoUrl, {
+            headers: {
+              'Authorization': `Bearer ${accessToken}`
+            }
+          });
+          
+          if (response.ok) {
+            const userInfo = await response.json();
+            console.log('UserInfo response:', userInfo);
+            // Merge ID token payload with UserInfo data
+            const fullUser = { ...payload, ...userInfo };
+            console.log('Full user data:', fullUser);
+            setUser(fullUser);
+          } else {
+            console.warn('UserInfo request failed:', response.status);
+            // Fall back to ID token data only
+            setUser(payload);
+          }
+        } catch (userInfoError) {
+          console.error('Error fetching UserInfo:', userInfoError);
+          // Fall back to ID token data only
+          setUser(payload);
+        }
+        
         setIsAuthenticated(true);
         console.log('User authenticated successfully');
       } else {
