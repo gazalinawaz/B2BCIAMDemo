@@ -15,24 +15,45 @@ export function AuthProvider({ children }) {
 
   const handleCallback = async () => {
     // Check if we're returning from OAuth (tokens in URL hash)
+    console.log('Checking for OAuth callback...');
+    console.log('Current URL hash:', window.location.hash);
+    
     if (window.location.hash) {
       try {
         // Parse tokens from URL hash
         const hash = window.location.hash.substring(1);
+        console.log('Hash content:', hash);
+        
         const params = new URLSearchParams(hash);
         const accessToken = params.get('access_token');
         const idToken = params.get('id_token');
+        const error = params.get('error');
+        const errorDescription = params.get('error_description');
+        
+        if (error) {
+          console.error('OAuth error:', error, errorDescription);
+          alert(`Login failed: ${errorDescription || error}`);
+          return;
+        }
+        
+        console.log('Access token present:', !!accessToken);
+        console.log('ID token present:', !!idToken);
         
         if (accessToken && idToken) {
+          console.log('Storing tokens...');
           // Store tokens in sessionStorage
           sessionStorage.setItem('accessToken', accessToken);
           sessionStorage.setItem('idToken', idToken);
+          
+          console.log('Tokens stored successfully');
           
           // Clean URL
           window.history.replaceState(null, '', window.location.pathname);
           
           // Get user info
           await checkAuth();
+        } else {
+          console.warn('Missing tokens in callback. Access token:', !!accessToken, 'ID token:', !!idToken);
         }
       } catch (error) {
         console.error('Callback error:', error);
@@ -45,14 +66,20 @@ export function AuthProvider({ children }) {
       const accessToken = sessionStorage.getItem('accessToken');
       const idToken = sessionStorage.getItem('idToken');
       
+      console.log('Checking auth - Access token:', !!accessToken, 'ID token:', !!idToken);
+      
       if (accessToken && idToken) {
         // Decode ID token to get user info (simple base64 decode)
         const payload = JSON.parse(atob(idToken.split('.')[1]));
+        console.log('User payload:', payload);
         setUser(payload);
         setIsAuthenticated(true);
+        console.log('User authenticated successfully');
+      } else {
+        console.log('No tokens found in sessionStorage');
       }
     } catch (error) {
-      console.log('Not authenticated', error);
+      console.error('Authentication check error:', error);
     } finally {
       setIsLoading(false);
     }
