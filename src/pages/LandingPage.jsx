@@ -7,213 +7,243 @@ function LandingPage() {
   return (
     <div style={{
       minHeight: '100vh',
-      background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-      position: 'relative',
-      overflow: 'hidden'
+      background: '#ffffff',
+      fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif'
     }}>
-      {/* Animated background shapes */}
-      <div style={{
-        position: 'absolute',
-        top: '-10%',
-        right: '-5%',
-        width: '500px',
-        height: '500px',
-        background: 'rgba(255, 255, 255, 0.1)',
-        borderRadius: '50%',
-        filter: 'blur(60px)',
-        animation: 'float 6s ease-in-out infinite'
-      }}></div>
-      <div style={{
-        position: 'absolute',
-        bottom: '-10%',
-        left: '-5%',
-        width: '400px',
-        height: '400px',
-        background: 'rgba(255, 255, 255, 0.1)',
-        borderRadius: '50%',
-        filter: 'blur(60px)',
-        animation: 'float 8s ease-in-out infinite reverse'
-      }}></div>
 
       {/* Navigation */}
       <nav style={{
-        padding: '1.5rem 2rem',
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        position: 'relative',
-        zIndex: 10
+        padding: '1rem 0',
+        borderBottom: '1px solid #e5e7eb',
+        background: '#ffffff'
       }}>
         <div style={{
-          fontSize: '1.5rem',
-          fontWeight: 'bold',
-          color: 'white',
+          maxWidth: '1200px',
+          margin: '0 auto',
+          padding: '0 2rem',
           display: 'flex',
-          alignItems: 'center',
-          gap: '0.5rem'
+          justifyContent: 'space-between',
+          alignItems: 'center'
         }}>
-          <span style={{ fontSize: '2rem' }}>⚡</span>
-          XYZ Broadband
+          <div style={{
+            fontSize: '1.5rem',
+            fontWeight: '600',
+            color: '#1f2937',
+            letterSpacing: '-0.5px'
+          }}>
+            XYZ Broadband
+          </div>
+          <div style={{ display: 'flex', gap: '2rem', alignItems: 'center' }}>
+            <a href="#plans" style={{ color: '#4b5563', textDecoration: 'none', fontSize: '0.95rem' }}>Plans</a>
+            <a href="#support" style={{ color: '#4b5563', textDecoration: 'none', fontSize: '0.95rem' }}>Support</a>
+            <a href="#about" style={{ color: '#4b5563', textDecoration: 'none', fontSize: '0.95rem' }}>About</a>
+            {!isAuthenticated && (
+              <button 
+                onClick={login}
+                style={{
+                  background: '#2563eb',
+                  color: 'white',
+                  border: 'none',
+                  padding: '0.625rem 1.25rem',
+                  borderRadius: '6px',
+                  cursor: 'pointer',
+                  fontWeight: '500',
+                  fontSize: '0.95rem'
+                }}
+              >
+                Sign In
+              </button>
+            )}
+          </div>
         </div>
-        {!isAuthenticated && (
-          <button 
-            onClick={login}
-            style={{
-              background: 'rgba(255, 255, 255, 0.2)',
-              color: 'white',
-              border: '2px solid rgba(255, 255, 255, 0.3)',
-              padding: '0.75rem 1.5rem',
-              borderRadius: '12px',
-              cursor: 'pointer',
-              fontWeight: '600',
-              backdropFilter: 'blur(10px)',
-              fontSize: '1rem'
-            }}
-          >
-            Sign In
-          </button>
-        )}
       </nav>
 
       {/* Hero Section */}
       <div style={{
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center',
-        padding: '4rem 2rem',
-        textAlign: 'center',
-        position: 'relative',
-        zIndex: 10,
-        minHeight: 'calc(100vh - 100px)'
+        maxWidth: '1200px',
+        margin: '0 auto',
+        padding: '5rem 2rem 4rem'
       }}>
-        <div style={{ maxWidth: '900px' }}>
-          <h1 style={{
-            fontSize: 'clamp(2.5rem, 6vw, 4.5rem)',
-            fontWeight: '800',
-            color: 'white',
-            marginBottom: '1.5rem',
-            lineHeight: '1.1',
-            textShadow: '0 4px 20px rgba(0,0,0,0.2)'
-          }}>
-            Experience Internet at
-            <span style={{
-              display: 'block',
-              background: 'linear-gradient(90deg, #fff 0%, #f0f0f0 100%)',
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
-              backgroundClip: 'text'
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: '1fr 1fr',
+          gap: '4rem',
+          alignItems: 'center'
+        }}>
+          <div>
+            <h1 style={{
+              fontSize: '3rem',
+              fontWeight: '700',
+              color: '#111827',
+              marginBottom: '1.5rem',
+              lineHeight: '1.2',
+              letterSpacing: '-1px'
             }}>
-              Lightning Speed
-            </span>
-          </h1>
-          
-          <p style={{
-            fontSize: 'clamp(1.1rem, 2vw, 1.4rem)',
-            color: 'rgba(255, 255, 255, 0.9)',
-            marginBottom: '3rem',
-            lineHeight: '1.6',
-            maxWidth: '600px',
-            margin: '0 auto 3rem'
-          }}>
-            Ultra-fast fiber broadband for homes and businesses. Stream, game, and work without limits.
-          </p>
+              Fast, Reliable Broadband for Your Home
+            </h1>
+            
+            <p style={{
+              fontSize: '1.125rem',
+              color: '#6b7280',
+              marginBottom: '2rem',
+              lineHeight: '1.7'
+            }}>
+              Get fiber-optic internet with speeds up to 1 Gbps. No contracts, no hidden fees. Just fast, dependable internet.
+            </p>
 
-          {!isAuthenticated ? (
-            <button 
-              onClick={login}
-              style={{
+            <div style={{ display: 'flex', gap: '1rem', marginBottom: '2rem' }}>
+              {!isAuthenticated ? (
+                <button 
+                  onClick={login}
+                  style={{
+                    background: '#2563eb',
+                    color: 'white',
+                    border: 'none',
+                    padding: '0.875rem 2rem',
+                    fontSize: '1rem',
+                    borderRadius: '6px',
+                    cursor: 'pointer',
+                    fontWeight: '500'
+                  }}
+                >
+                  View Plans
+                </button>
+              ) : (
+                <a 
+                  href="/dashboard"
+                  style={{
+                    display: 'inline-block',
+                    background: '#2563eb',
+                    color: 'white',
+                    padding: '0.875rem 2rem',
+                    fontSize: '1rem',
+                    borderRadius: '6px',
+                    fontWeight: '500',
+                    textDecoration: 'none'
+                  }}
+                >
+                  Go to Dashboard
+                </a>
+              )}
+              <button style={{
                 background: 'white',
-                color: '#667eea',
-                border: 'none',
-                padding: '1.25rem 3rem',
-                fontSize: '1.2rem',
-                borderRadius: '16px',
+                color: '#374151',
+                border: '1px solid #d1d5db',
+                padding: '0.875rem 2rem',
+                fontSize: '1rem',
+                borderRadius: '6px',
                 cursor: 'pointer',
-                fontWeight: '700',
-                boxShadow: '0 10px 40px rgba(0,0,0,0.2)',
-                marginBottom: '4rem'
-              }}
-              onMouseEnter={(e) => {
-                e.target.style.transform = 'translateY(-4px)';
-                e.target.style.boxShadow = '0 15px 50px rgba(0,0,0,0.3)';
-              }}
-              onMouseLeave={(e) => {
-                e.target.style.transform = 'translateY(0)';
-                e.target.style.boxShadow = '0 10px 40px rgba(0,0,0,0.2)';
-              }}
-            >
-              Get Started →
-            </button>
-          ) : (
-            <a 
-              href="/dashboard"
-              style={{
-                display: 'inline-block',
+                fontWeight: '500'
+              }}>
+                Contact Sales
+              </button>
+            </div>
+            
+            <p style={{ fontSize: '0.875rem', color: '#9ca3af' }}>
+              ✓ No setup fees  ✓ 30-day money back  ✓ 24/7 support
+            </p>
+          </div>
+          
+          <div style={{
+            background: '#f9fafb',
+            padding: '3rem',
+            borderRadius: '8px',
+            border: '1px solid #e5e7eb'
+          }}>
+            <h3 style={{ fontSize: '1.25rem', fontWeight: '600', color: '#111827', marginBottom: '1.5rem' }}>
+              Popular Plans
+            </h3>
+            {[
+              { speed: '100 Mbps', price: '$29.99', desc: 'Perfect for browsing and streaming' },
+              { speed: '500 Mbps', price: '$49.99', desc: 'Great for families and gaming', popular: true },
+              { speed: '1 Gbps', price: '$79.99', desc: 'Ultimate speed for power users' }
+            ].map((plan, i) => (
+              <div key={i} style={{
                 background: 'white',
-                color: '#667eea',
-                padding: '1.25rem 3rem',
-                fontSize: '1.2rem',
-                borderRadius: '16px',
-                fontWeight: '700',
-                boxShadow: '0 10px 40px rgba(0,0,0,0.2)',
-                textDecoration: 'none',
-                marginBottom: '4rem'
-              }}
-            >
-              Go to Dashboard →
-            </a>
-          )}
+                padding: '1.25rem',
+                marginBottom: '0.75rem',
+                borderRadius: '6px',
+                border: plan.popular ? '2px solid #2563eb' : '1px solid #e5e7eb',
+                position: 'relative'
+              }}>
+                {plan.popular && (
+                  <span style={{
+                    position: 'absolute',
+                    top: '-10px',
+                    right: '1rem',
+                    background: '#2563eb',
+                    color: 'white',
+                    padding: '0.25rem 0.75rem',
+                    fontSize: '0.75rem',
+                    borderRadius: '4px',
+                    fontWeight: '600'
+                  }}>MOST POPULAR</span>
+                )}
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
+                  <span style={{ fontSize: '1.125rem', fontWeight: '600', color: '#111827' }}>{plan.speed}</span>
+                  <span style={{ fontSize: '1.5rem', fontWeight: '700', color: '#2563eb' }}>{plan.price}<span style={{ fontSize: '0.875rem', fontWeight: '400', color: '#6b7280' }}>/mo</span></span>
+                </div>
+                <p style={{ fontSize: '0.875rem', color: '#6b7280', margin: 0 }}>{plan.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
 
-          {/* Feature Cards */}
+      {/* Features */}
+      <div style={{ background: '#f9fafb', padding: '4rem 0' }}>
+        <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 2rem' }}>
+          <h2 style={{ fontSize: '2rem', fontWeight: '700', color: '#111827', textAlign: 'center', marginBottom: '3rem' }}>
+            Why Choose XYZ Broadband?
+          </h2>
           <div style={{
             display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
-            gap: '2rem',
-            marginTop: '4rem'
+            gridTemplateColumns: 'repeat(3, 1fr)',
+            gap: '2rem'
           }}>
             {[
-              { icon: '⚡', title: 'Ultra Fast', desc: 'Up to 1 Gbps speed', color: '#fbbf24' },
-              { icon: '🔒', title: 'Secure', desc: 'Enterprise security', color: '#34d399' },
-              { icon: '💎', title: 'Premium', desc: '24/7 support', color: '#60a5fa' }
+              { title: 'Reliable Connection', desc: '99.9% uptime guarantee with fiber-optic technology' },
+              { title: 'No Contracts', desc: 'Month-to-month service with no long-term commitment' },
+              { title: 'Local Support', desc: 'US-based customer service available 24/7' },
+              { title: 'Easy Installation', desc: 'Professional setup included with every plan' },
+              { title: 'Transparent Pricing', desc: 'No hidden fees or surprise charges' },
+              { title: 'Unlimited Data', desc: 'No caps, no throttling, no limits' }
             ].map((feature, i) => (
               <div key={i} style={{
-                background: 'rgba(255, 255, 255, 0.15)',
-                backdropFilter: 'blur(20px)',
-                borderRadius: '20px',
-                padding: '2rem',
-                border: '1px solid rgba(255, 255, 255, 0.2)',
-                textAlign: 'center',
-                boxShadow: '0 8px 32px rgba(0,0,0,0.1)'
+                background: 'white',
+                padding: '1.5rem',
+                borderRadius: '6px',
+                border: '1px solid #e5e7eb'
               }}>
-                <div style={{
-                  fontSize: '3rem',
-                  marginBottom: '1rem',
-                  filter: `drop-shadow(0 4px 8px ${feature.color})`
-                }}>
-                  {feature.icon}
-                </div>
                 <h3 style={{
-                  fontSize: '1.5rem',
-                  fontWeight: '700',
-                  color: 'white',
+                  fontSize: '1.125rem',
+                  fontWeight: '600',
+                  color: '#111827',
                   marginBottom: '0.5rem'
                 }}>
                   {feature.title}
                 </h3>
                 <p style={{
-                  color: 'rgba(255, 255, 255, 0.8)',
-                  fontSize: '1rem'
+                  color: '#6b7280',
+                  fontSize: '0.9375rem',
+                  lineHeight: '1.6',
+                  margin: 0
                 }}>
                   {feature.desc}
                 </p>
               </div>
             ))}
           </div>
-          <p>Available 24/7 Customer Support</p>
-          <p style={{ marginTop: '0.5rem' }}>📞 1-800-XYZ-BROAD</p>
         </div>
       </div>
+      
+      {/* Footer */}
+      <footer style={{ background: '#111827', color: '#9ca3af', padding: '3rem 0' }}>
+        <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 2rem', textAlign: 'center' }}>
+          <p style={{ marginBottom: '1rem', fontSize: '0.9375rem' }}>© 2024 XYZ Broadband. All rights reserved.</p>
+          <p style={{ fontSize: '0.875rem' }}>Questions? Call us at 1-800-XYZ-BROAD</p>
+        </div>
+      </footer>
     </div>
   )
 }
