@@ -71,7 +71,8 @@ export function AuthProvider({ children }) {
       
       // Build OAuth URL (ensure no double slashes)
       const baseUrl = config.serverConfig.baseUrl.replace(/\/$/, ''); // Remove trailing slash
-      const authUrl = new URL(`${baseUrl}/oauth2/realms/root/realms/${config.realmPath}/authorize`);
+      // PingOne AIC uses /am/oauth2/realms/{realm}/authorize
+      const authUrl = new URL(`${baseUrl}/am/oauth2/realms/${config.realmPath}/authorize`);
       
       authUrl.searchParams.set('client_id', config.clientId);
       authUrl.searchParams.set('response_type', 'id_token token');
@@ -101,7 +102,8 @@ export function AuthProvider({ children }) {
       setIsAuthenticated(false);
       
       // Redirect to PingOne AIC logout
-      const logoutUrl = `${config.serverConfig.baseUrl}/oauth2/realms/root/realms/${config.realmPath}/connect/endSession?id_token_hint=${sessionStorage.getItem('idToken')}&post_logout_redirect_uri=${config.redirectUri}`;
+      const idToken = sessionStorage.getItem('idToken');
+      const logoutUrl = `${config.serverConfig.baseUrl}/am/oauth2/realms/${config.realmPath}/connect/endSession?id_token_hint=${idToken}&post_logout_redirect_uri=${config.redirectUri}`;
       window.location.href = logoutUrl;
     } catch (error) {
       console.error('Logout error:', error);
