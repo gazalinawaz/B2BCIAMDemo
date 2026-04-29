@@ -1,8 +1,8 @@
 import React from 'react'
-import { useAuth0 } from '@auth0/auth0-react'
+import { useAuth } from '../contexts/AuthContext'
 
 function Dashboard() {
-  const { user, logout, isLoading } = useAuth0()
+  const { user, logout, isLoading } = useAuth()
 
   if (isLoading) {
     return (
@@ -53,7 +53,7 @@ function Dashboard() {
           <p style={{ opacity: 0.8 }}>Welcome back, {user?.name || user?.email}!</p>
         </div>
         <button
-          onClick={() => logout({ logoutParams: { returnTo: window.location.origin } })}
+          onClick={logout}
           style={{
             background: 'rgba(255, 255, 255, 0.2)',
             color: 'white',

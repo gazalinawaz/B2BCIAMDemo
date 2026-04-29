@@ -1,18 +1,14 @@
 import React from 'react'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
-import { Auth0Provider } from '@auth0/auth0-react'
-import { pingOneConfig } from './config'
+import { AuthProvider } from './contexts/AuthContext'
+import './config' // Initialize ForgeRock SDK
 import LandingPage from './pages/LandingPage'
 import Dashboard from './pages/Dashboard'
 import ProtectedRoute from './components/ProtectedRoute'
 
 function App() {
   return (
-    <Auth0Provider
-      domain={pingOneConfig.domain}
-      clientId={pingOneConfig.clientId}
-      authorizationParams={pingOneConfig.authorizationParams}
-    >
+    <AuthProvider>
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<LandingPage />} />
@@ -26,7 +22,7 @@ function App() {
           />
         </Routes>
       </BrowserRouter>
-    </Auth0Provider>
+    </AuthProvider>
   )
 }
 

@@ -1,8 +1,8 @@
 import React from 'react'
-import { useAuth0 } from '@auth0/auth0-react'
+import { useAuth } from '../contexts/AuthContext'
 
 function LandingPage() {
-  const { loginWithRedirect, isAuthenticated } = useAuth0()
+  const { login, isAuthenticated } = useAuth()
 
   return (
     <div style={{
@@ -83,7 +83,7 @@ function LandingPage() {
 
         {!isAuthenticated ? (
           <button 
-            onClick={() => loginWithRedirect()}
+            onClick={login}
             style={{
               background: 'white',
               color: '#1e3c72',

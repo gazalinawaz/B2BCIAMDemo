@@ -1,9 +1,24 @@
-// PingOne AIC Configuration
+// PingOne AIC / ForgeRock Configuration
+import { Config } from '@forgerock/javascript-sdk';
+
+// Initialize ForgeRock SDK
+Config.set({
+  serverConfig: {
+    baseUrl: `https://${import.meta.env.VITE_PINGONE_DOMAIN || 'openam-accenture-11-20.forgeblocks.com'}`,
+    timeout: 5000,
+  },
+  realmPath: import.meta.env.VITE_PINGONE_REALM || 'alpha',
+  tree: import.meta.env.VITE_PINGONE_TREE || 'Login',
+  clientId: import.meta.env.VITE_PINGONE_CLIENT_ID || '',
+  redirectUri: import.meta.env.VITE_PINGONE_REDIRECT_URI || window.location.origin,
+  scope: 'openid profile email',
+});
+
 export const pingOneConfig = {
   domain: import.meta.env.VITE_PINGONE_DOMAIN || 'openam-accenture-11-20.forgeblocks.com',
+  realm: import.meta.env.VITE_PINGONE_REALM || 'alpha',
+  tree: import.meta.env.VITE_PINGONE_TREE || 'Login',
   clientId: import.meta.env.VITE_PINGONE_CLIENT_ID || '',
-  authorizationParams: {
-    redirect_uri: import.meta.env.VITE_PINGONE_REDIRECT_URI || window.location.origin,
-    audience: import.meta.env.VITE_PINGONE_AUDIENCE || '',
-  },
+  redirectUri: import.meta.env.VITE_PINGONE_REDIRECT_URI || window.location.origin,
+  scope: 'openid profile email',
 };
