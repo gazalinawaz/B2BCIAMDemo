@@ -152,6 +152,22 @@ function Dashboard() {
                 </p>
               </div>
             )}
+            {user?.city && (
+              <div>
+                <p style={{ color: '#6b7280', fontSize: '0.875rem', marginBottom: '0.25rem' }}>City</p>
+                <p style={{ color: '#111827', fontSize: '1.1rem', fontWeight: '600' }}>
+                  {user.city}
+                </p>
+              </div>
+            )}
+            {user?.address?.locality && (
+              <div>
+                <p style={{ color: '#6b7280', fontSize: '0.875rem', marginBottom: '0.25rem' }}>City</p>
+                <p style={{ color: '#111827', fontSize: '1.1rem', fontWeight: '600' }}>
+                  {user.address.locality}
+                </p>
+              </div>
+            )}
           </div>
         </div>
         {/* Stats Grid */}
