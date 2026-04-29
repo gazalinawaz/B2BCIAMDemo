@@ -61,7 +61,17 @@ export function AuthProvider({ children }) {
   const login = () => {
     try {
       const config = Config.get();
-      const authUrl = new URL(`${config.serverConfig.baseUrl}/oauth2/realms/root/realms/${config.realmPath}/authorize`);
+      
+      // Validate required config
+      if (!config.clientId) {
+        console.error('Client ID is not configured. Please set VITE_PINGONE_CLIENT_ID environment variable.');
+        alert('Configuration error: Client ID is missing. Please contact support.');
+        return;
+      }
+      
+      // Build OAuth URL (ensure no double slashes)
+      const baseUrl = config.serverConfig.baseUrl.replace(/\/$/, ''); // Remove trailing slash
+      const authUrl = new URL(`${baseUrl}/oauth2/realms/root/realms/${config.realmPath}/authorize`);
       
       authUrl.searchParams.set('client_id', config.clientId);
       authUrl.searchParams.set('response_type', 'id_token token');
@@ -69,6 +79,8 @@ export function AuthProvider({ children }) {
       authUrl.searchParams.set('redirect_uri', config.redirectUri);
       authUrl.searchParams.set('nonce', Math.random().toString(36).substring(7));
       authUrl.searchParams.set('state', Math.random().toString(36).substring(7));
+      
+      console.log('Redirecting to:', authUrl.toString());
       
       // Redirect to PingOne AIC login
       window.location.href = authUrl.toString();
