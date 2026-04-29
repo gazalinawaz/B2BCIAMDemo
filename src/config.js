@@ -14,7 +14,7 @@ Config.set({
   tree: import.meta.env.VITE_PINGONE_TREE || 'Login',
   clientId: import.meta.env.VITE_PINGONE_CLIENT_ID || '',
   redirectUri: import.meta.env.VITE_PINGONE_REDIRECT_URI || window.location.origin,
-  scope: 'openid profile email',
+  scope: 'openid email',
   // Implicit Flow Configuration
   oauthThreshold: 'implicit',
   tokenStore: 'sessionStorage',
@@ -34,6 +34,6 @@ export const pingOneConfig = {
   tree: import.meta.env.VITE_PINGONE_TREE || 'Login',
   clientId: import.meta.env.VITE_PINGONE_CLIENT_ID || '',
   redirectUri: import.meta.env.VITE_PINGONE_REDIRECT_URI || window.location.origin,
-  scope: 'openid profile email',
+  scope: 'openid email profile email',
   responseType: 'id_token token', // Implicit flow response type
 };
