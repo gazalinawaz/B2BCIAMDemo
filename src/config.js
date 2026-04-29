@@ -34,6 +34,6 @@ export const pingOneConfig = {
   tree: import.meta.env.VITE_PINGONE_TREE || 'Login',
   clientId: import.meta.env.VITE_PINGONE_CLIENT_ID || '',
   redirectUri: import.meta.env.VITE_PINGONE_REDIRECT_URI || window.location.origin,
-  scope: 'openid email profile email',
+  scope: 'openid email',
   responseType: 'id_token token', // Implicit flow response type
 };

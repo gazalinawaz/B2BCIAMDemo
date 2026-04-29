@@ -89,19 +89,19 @@ export function AuthProvider({ children }) {
           
           if (response.ok) {
             const userInfo = await response.json();
+            console.log('UserInfo response:', userInfo);
+            // Merge ID token payload with UserInfo data
+            const fullUser = { ...payload, ...userInfo };
+            console.log('Full user data:', fullUser);
+            setUser(fullUser);
+          } else {
+            const errorText = await response.text();
+            console.warn('UserInfo request failed:', response.status, errorText);
+            // Fall back to ID token data only
+            setUser(payload);
           }
-        });
-        
-        if (response.ok) {
-          const userInfo = await response.json();
-          console.log('UserInfo response:', userInfo);
-          // Merge ID token payload with UserInfo data
-          const fullUser = { ...payload, ...userInfo };
-          console.log('Full user data:', fullUser);
-          setUser(fullUser);
-        } else {
-          const errorText = await response.text();
-          console.warn('UserInfo request failed:', response.status, errorText);
+        } catch (userInfoError) {
+          console.error('Error fetching UserInfo:', userInfoError);
           // Fall back to ID token data only
           setUser(payload);
         }
