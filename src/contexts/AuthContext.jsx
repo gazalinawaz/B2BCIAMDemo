@@ -107,6 +107,7 @@ export function AuthProvider({ children }) {
       authUrl.searchParams.set('redirect_uri', config.redirectUri);
       authUrl.searchParams.set('nonce', Math.random().toString(36).substring(7));
       authUrl.searchParams.set('state', Math.random().toString(36).substring(7));
+      authUrl.searchParams.set('_t', Date.now().toString()); // Cache buster
       
       console.log('Redirecting to:', authUrl.toString());
       
