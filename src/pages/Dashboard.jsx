@@ -3,6 +3,10 @@ import { useAuth } from '../contexts/AuthContext'
 
 function Dashboard() {
   const { user, logout, isLoading } = useAuth()
+  
+  // Debug logging
+  console.log('Dashboard - User data:', user)
+  console.log('Dashboard - Is loading:', isLoading)
 
   if (isLoading) {
     return (
