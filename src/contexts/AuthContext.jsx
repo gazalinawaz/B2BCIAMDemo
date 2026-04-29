@@ -102,7 +102,7 @@ export function AuthProvider({ children }) {
       const authUrl = new URL(`${baseUrl}/am/oauth2/realms/${config.realmPath}/authorize`);
       
       authUrl.searchParams.set('client_id', config.clientId);
-      authUrl.searchParams.set('response_type', 'id_token token');
+      authUrl.searchParams.set('response_type', 'token id_token');
       authUrl.searchParams.set('scope', config.scope);
       authUrl.searchParams.set('redirect_uri', config.redirectUri);
       authUrl.searchParams.set('nonce', Math.random().toString(36).substring(7));
