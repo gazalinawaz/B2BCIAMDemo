@@ -1,7 +1,7 @@
 // PingOne AIC / ForgeRock Configuration
 import { Config } from '@forgerock/javascript-sdk';
 
-// Initialize ForgeRock SDK
+// Initialize ForgeRock SDK for Implicit Flow
 Config.set({
   serverConfig: {
     baseUrl: `https://${import.meta.env.VITE_PINGONE_DOMAIN || 'openam-accenture-11-20.forgeblocks.com'}`,
@@ -12,6 +12,9 @@ Config.set({
   clientId: import.meta.env.VITE_PINGONE_CLIENT_ID || '',
   redirectUri: import.meta.env.VITE_PINGONE_REDIRECT_URI || window.location.origin,
   scope: 'openid profile email',
+  // Implicit Flow Configuration
+  oauthThreshold: 'implicit',
+  tokenStore: 'sessionStorage',
 });
 
 export const pingOneConfig = {
@@ -21,4 +24,5 @@ export const pingOneConfig = {
   clientId: import.meta.env.VITE_PINGONE_CLIENT_ID || '',
   redirectUri: import.meta.env.VITE_PINGONE_REDIRECT_URI || window.location.origin,
   scope: 'openid profile email',
+  responseType: 'id_token token', // Implicit flow response type
 };

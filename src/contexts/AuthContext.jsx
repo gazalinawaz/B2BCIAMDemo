@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { TokenManager, UserManager, FRAuth } from '@forgerock/javascript-sdk';
+import { TokenManager, UserManager, FRAuth, TokenStorage } from '@forgerock/javascript-sdk';
 
 const AuthContext = createContext(null);
 
@@ -10,7 +10,38 @@ export function AuthProvider({ children }) {
 
   useEffect(() => {
     checkAuth();
+    // Handle OAuth callback (implicit flow returns tokens in URL hash)
+    handleCallback();
   }, []);
+
+  const handleCallback = async () => {
+    // Check if we're returning from OAuth (tokens in URL hash)
+    if (window.location.hash) {
+      try {
+        // Parse tokens from URL hash
+        const hash = window.location.hash.substring(1);
+        const params = new URLSearchParams(hash);
+        const accessToken = params.get('access_token');
+        const idToken = params.get('id_token');
+        
+        if (accessToken && idToken) {
+          // Store tokens
+          TokenStorage.set({
+            accessToken,
+            idToken,
+          });
+          
+          // Clean URL
+          window.history.replaceState(null, '', window.location.pathname);
+          
+          // Get user info
+          await checkAuth();
+        }
+      } catch (error) {
+        console.error('Callback error:', error);
+      }
+    }
+  };
 
   const checkAuth = async () => {
     try {
@@ -30,8 +61,12 @@ export function AuthProvider({ children }) {
   const login = async () => {
     try {
       setIsLoading(true);
-      // Redirect to ForgeRock login
-      await FRAuth.login();
+      // Redirect to ForgeRock login with implicit flow
+      await FRAuth.login({
+        query: {
+          response_type: 'id_token token',
+        },
+      });
     } catch (error) {
       console.error('Login error:', error);
       setIsLoading(false);
@@ -41,6 +76,7 @@ export function AuthProvider({ children }) {
   const logout = async () => {
     try {
       await FRAuth.logout();
+      TokenStorage.remove();
       setUser(null);
       setIsAuthenticated(false);
       window.location.href = '/';

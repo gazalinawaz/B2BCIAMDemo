@@ -55,7 +55,15 @@ VITE_PINGONE_REDIRECT_URI=https://your-app.vercel.app
 
 ### PingOne AIC Configuration
 
-In your PingOne AIC OAuth client settings, add:
+In your PingOne AIC OAuth client settings:
+
+**Client Type:** Web Application
+
+**Grant Types:**
+- ✅ Implicit Flow
+
+**Response Types:**
+- ✅ `id_token token`
 
 **Allowed Callback URLs:**
 - `http://localhost:5173` (for development)
@@ -73,11 +81,13 @@ In your PingOne AIC OAuth client settings, add:
 - Auth0 React SDK (compatible with PingOne AIC)
 - PingOne Advanced Identity Cloud (OIDC)
 
-## Authentication Flow
+## Authentication Flow (Implicit Flow)
 
 1. User clicks "Login to Your Account"
 2. Redirects to PingOne AIC login page
 3. User authenticates
-4. Redirects back to app with auth code
-5. Auth0 SDK exchanges code for tokens
+4. Redirects back to app with tokens in URL hash
+5. App extracts and stores tokens
 6. User accesses protected dashboard
+
+**Note:** This app uses OAuth 2.0 Implicit Flow. Tokens are returned directly in the URL hash after authentication.
