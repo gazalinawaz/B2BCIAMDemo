@@ -98,21 +98,23 @@ export function AuthProvider({ children }) {
       
       // Build OAuth URL (ensure no double slashes)
       const baseUrl = config.serverConfig.baseUrl.replace(/\/$/, ''); // Remove trailing slash
-      // PingOne AIC uses /am/oauth2/realms/{realm}/authorize
-      const authUrl = new URL(`${baseUrl}/am/oauth2/realms/${config.realmPath}/authorize`);
+      const nonce = Math.random().toString(36).substring(7);
+      const state = Math.random().toString(36).substring(7);
       
-      authUrl.searchParams.set('client_id', config.clientId);
-      authUrl.searchParams.set('response_type', 'id_token token');
-      authUrl.searchParams.set('scope', config.scope);
-      authUrl.searchParams.set('redirect_uri', config.redirectUri);
-      authUrl.searchParams.set('nonce', Math.random().toString(36).substring(7));
-      authUrl.searchParams.set('state', Math.random().toString(36).substring(7));
-      authUrl.searchParams.set('_t', Date.now().toString()); // Cache buster
+      // Manually construct URL to avoid double-encoding of response_type
+      // Using + instead of space to prevent encoding issues
+      const authUrl = `${baseUrl}/am/oauth2/realms/${config.realmPath}/authorize?` +
+        `client_id=${encodeURIComponent(config.clientId)}&` +
+        `response_type=id_token+token&` +
+        `scope=${encodeURIComponent(config.scope)}&` +
+        `redirect_uri=${encodeURIComponent(config.redirectUri)}&` +
+        `nonce=${nonce}&` +
+        `state=${state}`;
       
-      console.log('Redirecting to:', authUrl.toString());
+      console.log('Redirecting to:', authUrl);
       
       // Redirect to PingOne AIC login
-      window.location.href = authUrl.toString();
+      window.location.href = authUrl;
     } catch (error) {
       console.error('Login error:', error);
       setIsLoading(false);
