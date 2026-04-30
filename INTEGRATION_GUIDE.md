@@ -48,13 +48,13 @@ This document provides complete step-by-step instructions for integrating PingOn
    - **Important**: URLs must match EXACTLY (no trailing slashes)
 
 4. **Configure Scopes**
-   - Enable the following scopes:
-     - ✅ `openid` (required)
+   - **IMPORTANT**: Enable ALL of the following scopes in your PingOne AIC OAuth client:
+     - ✅ `openid` (required - always enabled)
      - ✅ `email` (for email address)
-     - ✅ `profile` (for name, given_name, etc.) - *optional*
-     - ✅ `address` (for city, country, etc.) - *optional*
+     - ✅ `profile` (for name, given_name, family_name, etc.)
+     - ✅ `address` (for city, country, postal_code, etc.)
    
-   **Note**: Only enable scopes that you need. Each scope must be explicitly enabled in the OAuth client configuration.
+   **Note**: The application requests all these scopes by default. If any scope is not enabled in PingOne AIC, you will get an `invalid_scope` error during login.
 
 5. **Save Configuration**
 
@@ -104,7 +104,7 @@ Config.set({
   realmPath: import.meta.env.VITE_PINGONE_REALM || 'alpha',
   clientId: import.meta.env.VITE_PINGONE_CLIENT_ID || '',
   redirectUri: import.meta.env.VITE_PINGONE_REDIRECT_URI || window.location.origin,
-  scope: 'openid email address',
+  scope: 'openid email profile address', // All standard OIDC scopes
   oauthThreshold: 'implicit',
   tokenStore: 'sessionStorage',
 });
