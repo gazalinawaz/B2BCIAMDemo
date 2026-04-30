@@ -129,10 +129,12 @@ export function AuthProvider({ children }) {
         return;
       }
       
+      console.log('OAuth Config - Scopes being requested:', config.scope);
+      
       // Build OAuth URL (ensure no double slashes)
       const baseUrl = config.serverConfig.baseUrl.replace(/\/$/, ''); // Remove trailing slash
-      const nonce = Math.random().toString(36).substring(7);
       const state = Math.random().toString(36).substring(7);
+      const nonce = Math.random().toString(36).substring(7);
       
       // Manually construct URL to avoid double-encoding of response_type
       // Using + instead of space to prevent encoding issues
@@ -144,6 +146,7 @@ export function AuthProvider({ children }) {
         `nonce=${nonce}&` +
         `state=${state}`;
       
+      console.log('OAuth URL scopes:', config.scope);
       console.log('Redirecting to:', authUrl);
       
       // Redirect to PingOne AIC login
