@@ -218,10 +218,54 @@ Or connect your GitHub repository to Vercel for automatic deployments.
 **Current Status**: 
 - ✅ Authentication working
 - ✅ Email claim working (with `email` scope)
-- ⚠️ City/address claims require `address` scope to be enabled in PingOne AIC
-- ⚠️ Name claims require `profile` scope to be enabled in PingOne AIC
+- ⚠️ City/address claims require:
+  - `address` scope enabled in PingOne AIC OAuth client
+  - User profile must have city/address values populated
+  - PingOne AIC must be configured to map user attributes to OIDC address claims
+- ⚠️ Name claims require:
+  - `profile` scope enabled in PingOne AIC OAuth client
+  - User profile must have name/given_name values populated
+  - PingOne AIC must be configured to map user attributes to OIDC profile claims
 
-### Issue 2: Invalid Scope Error
+**Important**: Enabling scopes alone is not sufficient. The user's profile in PingOne AIC must have actual values for these attributes, and PingOne AIC must be configured to include them in the ID token or UserInfo response.
+
+### Issue 2: Scopes Enabled But Claims Not Appearing
+
+**Problem**: You've enabled `profile` and `address` scopes in PingOne AIC, but the ID token and UserInfo response still don't contain name, city, or other profile claims.
+
+**Possible Causes**:
+
+1. **User Profile Has No Values**
+   - The user account doesn't have values for name, city, etc.
+   - Solution: Update the user profile in PingOne AIC to add these values
+
+2. **PingOne AIC Attribute Mapping Not Configured**
+   - PingOne AIC may not be configured to map internal user attributes to OIDC standard claims
+   - Solution: Configure attribute mapping in PingOne AIC:
+     - Go to **Identity Cloud** → **Managed Objects** → **User**
+     - Ensure fields like `givenName`, `sn` (surname), `mail`, `city`, etc. exist
+     - Go to **OAuth 2.0** → **Client** → **Scopes**
+     - Configure scope mappings to include user attributes
+
+3. **Check UserInfo Endpoint Response**
+   - Open browser console
+   - Look for `UserInfo response:` log
+   - If it shows `{"sub": "..."}` only, then PingOne AIC is not returning additional claims
+   - This means attribute mapping needs to be configured
+
+**To Verify User Profile**:
+1. Log in to PingOne AIC admin console
+2. Go to **Identities** → **Manage** → **User**
+3. Find the test user (e.g., `a.user2@example.com`)
+4. Check if these fields have values:
+   - Given Name
+   - Family Name / Surname
+   - City
+   - Country
+   - Postal Code
+5. If empty, add values and test again
+
+### Issue 3: Invalid Scope Error
 
 **Problem**: `invalid_scope` error during login.
 
