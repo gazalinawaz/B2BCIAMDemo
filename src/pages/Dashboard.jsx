@@ -170,6 +170,48 @@ function Dashboard() {
             )}
           </div>
         </div>
+
+        {/* Groups Section */}
+        {(user?.groups || user?.group) && (
+          <div style={{
+            background: 'white',
+            borderRadius: '8px',
+            padding: '1.5rem',
+            border: '1px solid #e5e7eb',
+            marginBottom: '2rem'
+          }}>
+            <h3 style={{
+              fontSize: '1.125rem',
+              fontWeight: '600',
+              color: '#111827',
+              marginBottom: '1rem'
+            }}>
+              Groups & Roles
+            </h3>
+            <div style={{
+              display: 'flex',
+              flexWrap: 'wrap',
+              gap: '0.5rem'
+            }}>
+              {(Array.isArray(user.groups) ? user.groups : Array.isArray(user.group) ? user.group : [user.groups || user.group]).map((group, index) => (
+                <span
+                  key={index}
+                  style={{
+                    background: '#f3f4f6',
+                    color: '#374151',
+                    padding: '0.5rem 1rem',
+                    borderRadius: '6px',
+                    fontSize: '0.875rem',
+                    fontWeight: '500',
+                    border: '1px solid #e5e7eb'
+                  }}
+                >
+                  {typeof group === 'string' ? group : group.name || group._id || JSON.stringify(group)}
+                </span>
+              ))}
+            </div>
+          </div>
+        )}
         {/* Stats Grid */}
         <div style={{
           display: 'grid',
