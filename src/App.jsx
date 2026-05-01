@@ -4,7 +4,6 @@ import { AuthProvider } from './contexts/AuthContext'
 import './config' // Initialize ForgeRock SDK
 import LandingPage from './pages/LandingPage'
 import Dashboard from './pages/Dashboard'
-import ProtectedRoute from './components/ProtectedRoute'
 
 function App() {
   return (
@@ -12,14 +11,7 @@ function App() {
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<LandingPage />} />
-          <Route 
-            path="/dashboard" 
-            element={
-              <ProtectedRoute>
-                <Dashboard />
-              </ProtectedRoute>
-            } 
-          />
+          <Route path="/dashboard" element={<Dashboard />} />
         </Routes>
       </BrowserRouter>
     </AuthProvider>
