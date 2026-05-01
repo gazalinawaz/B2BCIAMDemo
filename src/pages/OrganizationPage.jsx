@@ -31,6 +31,9 @@ function OrganizationPage() {
   const [newOrgDescription, setNewOrgDescription] = useState('');
   const [inviteEmail, setInviteEmail] = useState('');
   const [inviteRole, setInviteRole] = useState('Customer Port Admin');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [searchResults, setSearchResults] = useState([]);
+  const [searchLoading, setSearchLoading] = useState(false);
 
   useEffect(() => {
     loadData();
@@ -179,9 +182,33 @@ function OrganizationPage() {
     }
   };
 
-  const suggestMailinatorEmail = () => {
-    const randomId = Math.random().toString(36).substring(7);
-    return `testuser${randomId}@mailinator.com`;
+  const handleSearchUsers = async (query) => {
+    setSearchQuery(query);
+    
+    if (query.length < 2) {
+      setSearchResults([]);
+      return;
+    }
+    
+    try {
+      setSearchLoading(true);
+      // Search users by email or name
+      const { queryUsers } = await import('../utils/aicApi');
+      const filter = `(mail sw "${query}") or (givenName sw "${query}") or (sn sw "${query}") or (userName sw "${query}")`;
+      const results = await queryUsers(filter);
+      setSearchResults(results.result || []);
+    } catch (err) {
+      console.error('Error searching users:', err);
+      setSearchResults([]);
+    } finally {
+      setSearchLoading(false);
+    }
+  };
+
+  const handleSelectUser = (user) => {
+    setInviteEmail(user.mail || user.userName);
+    setSearchQuery('');
+    setSearchResults([]);
   };
 
   return (
@@ -538,43 +565,95 @@ function OrganizationPage() {
                     
                     <div style={{ marginBottom: '1.5rem' }}>
                       <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: '500', marginBottom: '0.5rem' }}>
-                        Invitee Email Address *
+                        Search and Select User *
                       </label>
-                      <div style={{ display: 'flex', gap: '0.5rem' }}>
+                      <div style={{ position: 'relative' }}>
                         <input
-                          type="email"
-                          value={inviteEmail}
-                          onChange={(e) => setInviteEmail(e.target.value)}
-                          required
-                          placeholder="user@mailinator.com"
+                          type="text"
+                          value={searchQuery}
+                          onChange={(e) => handleSearchUsers(e.target.value)}
+                          placeholder="Search by name or email..."
                           style={{
-                            flex: 1,
+                            width: '100%',
                             padding: '0.75rem',
                             border: '1px solid #d1d5db',
                             borderRadius: '6px',
                             fontSize: '0.875rem'
                           }}
                         />
-                        <button
-                          type="button"
-                          onClick={() => setInviteEmail(suggestMailinatorEmail())}
-                          style={{
-                            background: '#f3f4f6',
-                            color: '#374151',
+                        {searchLoading && (
+                          <div style={{
+                            position: 'absolute',
+                            right: '0.75rem',
+                            top: '50%',
+                            transform: 'translateY(-50%)',
+                            color: '#9ca3af'
+                          }}>
+                            Searching...
+                          </div>
+                        )}
+                        {searchResults.length > 0 && (
+                          <div style={{
+                            position: 'absolute',
+                            top: '100%',
+                            left: 0,
+                            right: 0,
+                            background: 'white',
                             border: '1px solid #d1d5db',
-                            padding: '0.75rem 1rem',
                             borderRadius: '6px',
-                            cursor: 'pointer',
-                            fontSize: '0.875rem',
-                            whiteSpace: 'nowrap'
-                          }}
-                        >
-                          📧 Use Mailinator
-                        </button>
+                            marginTop: '0.25rem',
+                            maxHeight: '200px',
+                            overflowY: 'auto',
+                            zIndex: 10,
+                            boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
+                          }}>
+                            {searchResults.map((user) => (
+                              <div
+                                key={user._id}
+                                onClick={() => handleSelectUser(user)}
+                                style={{
+                                  padding: '0.75rem',
+                                  cursor: 'pointer',
+                                  borderBottom: '1px solid #f3f4f6',
+                                  ':hover': { background: '#f9fafb' }
+                                }}
+                                onMouseEnter={(e) => e.currentTarget.style.background = '#f9fafb'}
+                                onMouseLeave={(e) => e.currentTarget.style.background = 'white'}
+                              >
+                                <div style={{ fontWeight: '500', fontSize: '0.875rem' }}>
+                                  {user.givenName} {user.sn}
+                                </div>
+                                <div style={{ fontSize: '0.75rem', color: '#6b7280' }}>
+                                  {user.mail || user.userName}
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        )}
                       </div>
                       <p style={{ fontSize: '0.75rem', color: '#6b7280', marginTop: '0.5rem' }}>
-                        💡 Tip: Use @mailinator.com emails for testing. Check inbox at <a href="https://www.mailinator.com" target="_blank" rel="noopener noreferrer" style={{ color: '#667eea' }}>mailinator.com</a>
+                        💡 Start typing to search for users by name or email
                       </p>
+                    </div>
+                    
+                    <div style={{ marginBottom: '1.5rem' }}>
+                      <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: '500', marginBottom: '0.5rem' }}>
+                        Selected User Email
+                      </label>
+                      <input
+                        type="email"
+                        value={inviteEmail}
+                        onChange={(e) => setInviteEmail(e.target.value)}
+                        required
+                        placeholder="Select a user from search or enter email manually"
+                        style={{
+                          width: '100%',
+                          padding: '0.75rem',
+                          border: '1px solid #d1d5db',
+                          borderRadius: '6px',
+                          fontSize: '0.875rem'
+                        }}
+                      />
                     </div>
                     
                     <div style={{ marginBottom: '1.5rem' }}>
