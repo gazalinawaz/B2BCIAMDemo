@@ -73,6 +73,15 @@ export function AuthProvider({ children }) {
         const payload = JSON.parse(atob(idToken.split('.')[1]));
         console.log('User payload from ID token:', payload);
         
+        // Decode access token to get groups
+        let accessTokenPayload = {};
+        try {
+          accessTokenPayload = JSON.parse(atob(accessToken.split('.')[1]));
+          console.log('Access token payload:', accessTokenPayload);
+        } catch (err) {
+          console.warn('Could not decode access token:', err);
+        }
+        
         // Fetch additional user info from UserInfo endpoint
         try {
           const config = Config.get();
@@ -90,20 +99,31 @@ export function AuthProvider({ children }) {
           if (response.ok) {
             const userInfo = await response.json();
             console.log('UserInfo response:', userInfo);
-            // Merge ID token payload with UserInfo data
-            const fullUser = { ...payload, ...userInfo };
-            console.log('Full user data:', fullUser);
+            // Merge ID token, access token (for groups), and UserInfo data
+            const fullUser = { 
+              ...payload, 
+              ...userInfo,
+              // Get groups from access token
+              groups: accessTokenPayload.groups || userInfo.groups || payload.groups
+            };
+            console.log('Full user data with groups:', fullUser);
             setUser(fullUser);
           } else {
             const errorText = await response.text();
             console.warn('UserInfo request failed:', response.status, errorText);
-            // Fall back to ID token data only
-            setUser(payload);
+            // Fall back to ID token + access token data
+            setUser({ 
+              ...payload, 
+              groups: accessTokenPayload.groups || payload.groups 
+            });
           }
         } catch (userInfoError) {
           console.error('Error fetching UserInfo:', userInfoError);
-          // Fall back to ID token data only
-          setUser(payload);
+          // Fall back to ID token + access token data
+          setUser({ 
+            ...payload, 
+            groups: accessTokenPayload.groups || payload.groups 
+          });
         }
         
         setIsAuthenticated(true);
