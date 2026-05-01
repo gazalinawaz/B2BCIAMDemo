@@ -56,19 +56,46 @@ export const queryOrganizations = async (filter = 'true') => {
 
 /**
  * Get organizations for a specific user
+ * Uses the user's memberOfOrgIDs virtual property
  * @param {string} userId - User ID
  */
 export const getUserOrganizations = async (userId) => {
   const realm = getRealm();
   
-  // Query organizations where user is admin, owner, or member
-  const filter = `(admins/_ref eq "managed/${realm}_user/${userId}") or (owners/_ref eq "managed/${realm}_user/${userId}") or (members/_ref eq "managed/${realm}_user/${userId}")`;
-  
   console.log('getUserOrganizations - userId:', userId);
-  console.log('getUserOrganizations - filter:', filter);
-  const result = await queryOrganizations(filter);
-  console.log('getUserOrganizations - result:', result);
-  return result;
+  
+  // Get user object to access memberOfOrgIDs
+  const user = await callAicApi(`/openidm/managed/${realm}_user/${userId}?_fields=memberOfOrgIDs,adminOfOrgIDs,ownerOfOrgIDs`);
+  console.log('User org relationships:', user);
+  
+  // Collect all organization IDs
+  const orgIds = [
+    ...(user.memberOfOrgIDs || []),
+    ...(user.adminOfOrgIDs || []),
+    ...(user.ownerOfOrgIDs || [])
+  ];
+  
+  // Remove duplicates
+  const uniqueOrgIds = [...new Set(orgIds)];
+  console.log('User organization IDs:', uniqueOrgIds);
+  
+  if (uniqueOrgIds.length === 0) {
+    return { result: [], resultCount: 0 };
+  }
+  
+  // Fetch all organizations
+  const orgPromises = uniqueOrgIds.map(orgId => 
+    getOrganization(orgId).catch(err => {
+      console.warn(`Failed to fetch org ${orgId}:`, err);
+      return null;
+    })
+  );
+  
+  const orgs = await Promise.all(orgPromises);
+  const validOrgs = orgs.filter(org => org !== null);
+  
+  console.log('getUserOrganizations - result:', validOrgs);
+  return { result: validOrgs, resultCount: validOrgs.length };
 };
 
 /**
