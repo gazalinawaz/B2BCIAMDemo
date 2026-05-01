@@ -2,7 +2,11 @@ import React from 'react'
 import { useAuth } from '../contexts/AuthContext'
 
 function LandingPage() {
-  const { login, isAuthenticated } = useAuth()
+  const { login } = useAuth()
+
+  const handleSignIn = () => {
+    login()
+  }
 
   return (
     <div style={{
