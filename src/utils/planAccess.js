@@ -110,7 +110,7 @@ export const getUserPlan = (user) => {
  */
 export const getUserPlanDetails = (user) => {
   const userPlan = getUserPlan(user);
-  return PLAN_FEATURES[userPlan] || PLAN_FEATURES[PLANS.SIMPLE];
+  return userPlan ? PLAN_FEATURES[userPlan] : null;
 };
 
 /**
