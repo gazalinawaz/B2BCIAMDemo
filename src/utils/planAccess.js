@@ -118,6 +118,7 @@ export const getUserPlanDetails = (user) => {
  */
 export const hasFeatureAccess = (user, feature) => {
   const planDetails = getUserPlanDetails(user);
+  if (!planDetails) return false;
   return planDetails[feature] === true;
 };
 
@@ -126,5 +127,6 @@ export const hasFeatureAccess = (user, feature) => {
  */
 export const hasMinimumAccessLevel = (user, requiredLevel) => {
   const planDetails = getUserPlanDetails(user);
+  if (!planDetails) return false;
   return planDetails.accessLevel >= requiredLevel;
 };
