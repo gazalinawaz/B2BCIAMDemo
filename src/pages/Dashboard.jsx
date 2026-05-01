@@ -63,6 +63,21 @@ function Dashboard() {
           </div>
           <div style={{ display: 'flex', gap: '1rem' }}>
             <button
+              onClick={() => window.location.href = '/organizations'}
+              style={{
+                background: '#10b981',
+                color: 'white',
+                border: 'none',
+                padding: '0.625rem 1.25rem',
+                borderRadius: '6px',
+                cursor: 'pointer',
+                fontWeight: '500',
+                fontSize: '0.95rem'
+              }}
+            >
+              🏢 Organizations
+            </button>
+            <button
               onClick={() => window.location.href = '/api-test'}
               style={{
                 background: '#667eea',

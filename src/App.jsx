@@ -5,6 +5,7 @@ import './config' // Initialize ForgeRock SDK
 import LandingPage from './pages/LandingPage'
 import Dashboard from './pages/Dashboard'
 import ApiTestPage from './pages/ApiTestPage'
+import OrganizationPage from './pages/OrganizationPage'
 
 function App() {
   return (
@@ -14,6 +15,7 @@ function App() {
           <Route path="/" element={<LandingPage />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/api-test" element={<ApiTestPage />} />
+          <Route path="/organizations" element={<OrganizationPage />} />
         </Routes>
       </BrowserRouter>
     </AuthProvider>
