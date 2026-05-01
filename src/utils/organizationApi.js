@@ -60,8 +60,10 @@ export const queryOrganizations = async (filter = 'true') => {
  */
 export const getUserOrganizations = async (userId) => {
   const realm = getRealm();
-  // Query organizations where user is a member
-  const filter = `members/_ref eq "managed/${realm}_user/${userId}"`;
+  
+  // Query organizations where user is admin, owner, or member
+  const filter = `(admins/_ref eq "managed/${realm}_user/${userId}") or (owners/_ref eq "managed/${realm}_user/${userId}") or (members/_ref eq "managed/${realm}_user/${userId}")`;
+  
   console.log('getUserOrganizations - userId:', userId);
   console.log('getUserOrganizations - filter:', filter);
   const result = await queryOrganizations(filter);
@@ -106,21 +108,29 @@ export const deleteOrganization = async (orgId) => {
 export const addUserToOrganization = async (orgId, userId, role = 'Member') => {
   const realm = getRealm();
   
-  // Use the correct relationship structure for alpha_organization
-  // The members property uses _refProperties for additional data like role
+  // PingOne AIC organizations use different relationships:
+  // - admins: Org Admins
+  // - owners: Org Owners  
+  // - members: Regular members
+  
+  let field = '/members/-';
+  if (role === 'Org Admin') {
+    field = '/admins/-';
+  } else if (role === 'Org Owner') {
+    field = '/owners/-';
+  }
+  
   const operations = [
     {
       operation: 'add',
-      field: '/members/-',
+      field: field,
       value: {
-        _ref: `managed/${realm}_user/${userId}`,
-        _refProperties: {
-          role: role
-        }
+        _ref: `managed/${realm}_user/${userId}`
       }
     }
   ];
   
+  console.log('addUserToOrganization - operations:', operations);
   return updateOrganization(orgId, operations);
 };
 
@@ -184,7 +194,40 @@ export const updateUserRole = async (orgId, userId, newRole) => {
  */
 export const getOrganizationMembers = async (orgId) => {
   const org = await getOrganization(orgId);
-  return org.members || [];
+  
+  const members = [];
+  
+  // Add admins
+  if (org.admins) {
+    org.admins.forEach(admin => {
+      members.push({
+        ...admin,
+        _refProperties: { role: 'Org Admin' }
+      });
+    });
+  }
+  
+  // Add owners
+  if (org.owners) {
+    org.owners.forEach(owner => {
+      members.push({
+        ...owner,
+        _refProperties: { role: 'Org Owner' }
+      });
+    });
+  }
+  
+  // Add regular members
+  if (org.members) {
+    org.members.forEach(member => {
+      members.push({
+        ...member,
+        _refProperties: { role: member._refProperties?.role || 'Member' }
+      });
+    });
+  }
+  
+  return members;
 };
 
 // ============================================
@@ -359,9 +402,9 @@ export const sendOrganizationInvitation = async (orgId, inviterUserId, inviteeEm
 export const isOrgAdmin = async (orgId, userId) => {
   const realm = getRealm();
   const org = await getOrganization(orgId);
+  const userRef = `managed/${realm}_user/${userId}`;
   
-  const member = org.members?.find(m => m._ref === `managed/${realm}_user/${userId}`);
-  return member?._refProperties?.role === 'Org Admin';
+  return org.admins?.some(a => a._ref === userRef) || false;
 };
 
 /**
@@ -372,7 +415,22 @@ export const isOrgAdmin = async (orgId, userId) => {
 export const getUserRoleInOrganization = async (orgId, userId) => {
   const realm = getRealm();
   const org = await getOrganization(orgId);
+  const userRef = `managed/${realm}_user/${userId}`;
   
-  const member = org.members?.find(m => m._ref === `managed/${realm}_user/${userId}`);
-  return member?._refProperties?.role || null;
+  // Check admins
+  if (org.admins?.find(a => a._ref === userRef)) {
+    return 'Org Admin';
+  }
+  
+  // Check owners
+  if (org.owners?.find(o => o._ref === userRef)) {
+    return 'Org Owner';
+  }
+  
+  // Check members
+  if (org.members?.find(m => m._ref === userRef)) {
+    return 'Member';
+  }
+  
+  return null;
 };
