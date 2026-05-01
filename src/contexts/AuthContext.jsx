@@ -177,11 +177,16 @@ export function AuthProvider({ children }) {
   };
 
   const logout = () => {
-    sessionStorage.removeItem('accessToken');
-    sessionStorage.removeItem('idToken');
+    // Clear state immediately
     setUser(null);
     setIsAuthenticated(false);
-    // Redirect to landing page
+    setIsLoading(true); // Show loading to prevent flash
+    
+    // Clear tokens
+    sessionStorage.removeItem('accessToken');
+    sessionStorage.removeItem('idToken');
+    
+    // Redirect immediately
     window.location.href = '/';
   };
 
