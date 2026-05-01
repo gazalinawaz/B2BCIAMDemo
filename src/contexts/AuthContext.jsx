@@ -83,7 +83,16 @@ export function AuthProvider({ children }) {
           console.warn('Could not decode access token:', err);
         }
         
-        // Fetch additional user info from UserInfo endpoint
+        // Set basic user data immediately to show UI faster
+        const basicUser = { 
+          ...payload, 
+          groups: accessTokenPayload.groups || payload.groups 
+        };
+        setUser(basicUser);
+        setIsAuthenticated(true);
+        setIsLoading(false); // Set loading false immediately
+        
+        // Fetch additional user info from UserInfo endpoint in background
         try {
           const config = Config.get();
           const baseUrl = config.serverConfig.baseUrl.replace(/\/$/, '');
@@ -109,32 +118,21 @@ export function AuthProvider({ children }) {
             };
             console.log('Full user data with groups:', fullUser);
             setUser(fullUser);
-          } else {
-            const errorText = await response.text();
-            console.warn('UserInfo request failed:', response.status, errorText);
-            // Fall back to ID token + access token data
-            setUser({ 
-              ...payload, 
-              groups: accessTokenPayload.groups || payload.groups 
-            });
           }
         } catch (userInfoError) {
           console.error('Error fetching UserInfo:', userInfoError);
-          // Fall back to ID token + access token data
-          setUser({ 
-            ...payload, 
-            groups: accessTokenPayload.groups || payload.groups 
-          });
+          // Already have basic user data, so this is fine
         }
-        
-        setIsAuthenticated(true);
-        console.log('User authenticated successfully');
       } else {
         console.log('No tokens found in sessionStorage');
+        setUser(null);
+        setIsAuthenticated(false);
+        setIsLoading(false);
       }
     } catch (error) {
-      console.error('Authentication check error:', error);
-    } finally {
+      console.error('Auth check error:', error);
+      setUser(null);
+      setIsAuthenticated(false);
       setIsLoading(false);
     }
   };
