@@ -20,14 +20,6 @@ Config.set({
   tokenStore: 'sessionStorage',
 });
 
-// Log configuration for debugging (remove in production)
-console.log('PingOne AIC Config:', {
-  domain,
-  clientId: import.meta.env.VITE_PINGONE_CLIENT_ID || 'NOT SET',
-  realm: import.meta.env.VITE_PINGONE_REALM || 'alpha',
-  redirectUri: import.meta.env.VITE_PINGONE_REDIRECT_URI || window.location.origin,
-});
-
 export const pingOneConfig = {
   domain: import.meta.env.VITE_PINGONE_DOMAIN || 'openam-accenture-11-20.forgeblocks.com',
   realm: import.meta.env.VITE_PINGONE_REALM || 'alpha',

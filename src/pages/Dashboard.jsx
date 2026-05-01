@@ -8,11 +8,6 @@ function Dashboard() {
   
   // Get user's plan details for authorization
   const planDetails = user ? getUserPlanDetails(user) : null
-  
-  // Debug logging
-  console.log('Dashboard - User data:', user)
-  console.log('Dashboard - User plan:', planDetails)
-  console.log('Dashboard - Is loading:', isLoading)
 
   if (isLoading) {
     return (

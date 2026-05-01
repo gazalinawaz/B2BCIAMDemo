@@ -73,21 +73,47 @@ In your PingOne AIC OAuth client settings:
 - `http://localhost:5173`
 - `https://your-app.vercel.app`
 
-## Tech Stack
+1. User logs in via PingOne AIC
+2. Access token contains `groups` claim
+3. `planAccess.js` determines plan from groups
+4. Dashboard shows plan banner and features
+5. `FeatureCard` components check access and show lock icons
 
-- React 18
-- Vite
-- React Router v6
-- Auth0 React SDK (compatible with PingOne AIC)
-- PingOne Advanced Identity Cloud (OIDC)
+## Security
 
-## Authentication Flow (Implicit Flow)
+- No client secret in frontend (Implicit Flow)
+- Tokens stored in sessionStorage (cleared on logout)
+- HTTPS required for production
+- CORS configured in PingOne AIC
+- Token validation via UserInfo endpoint
 
-1. User clicks "Login to Your Account"
-2. Redirects to PingOne AIC login page
-3. User authenticates
-4. Redirects back to app with tokens in URL hash
-5. App extracts and stores tokens
-6. User accesses protected dashboard
+## Documentation
 
-**Note:** This app uses OAuth 2.0 Implicit Flow. Tokens are returned directly in the URL hash after authentication.
+- **[INTEGRATION_GUIDE.md](./INTEGRATION_GUIDE.md)** - Detailed OAuth integration steps
+- **[DEMO_SETUP.md](./DEMO_SETUP.md)** - Demo presentation guide
+
+## Troubleshooting
+
+### "Invalid Scope" Error
+- Ensure all scopes (`openid`, `email`, `profile`) are enabled in PingOne AIC OAuth client
+
+### "Unauthorized Grant Type" Error
+- Enable "Implicit" grant type in OAuth client settings
+- Enable `token` and `id_token` response types
+
+### Groups Not Showing
+- Verify user is assigned to a group in PingOne AIC
+- Check browser console for `Access token payload:` log
+- Ensure group names match exactly (case-insensitive)
+
+### Page Refresh Issues
+- Clear browser cache and sessionStorage
+- Hard refresh: Ctrl+Shift+R (Windows) or Cmd+Shift+R (Mac)
+
+## License
+
+MIT
+
+## Support
+
+For issues or questions, contact your PingOne AIC administrator.
