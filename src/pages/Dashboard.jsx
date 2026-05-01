@@ -96,128 +96,15 @@ function Dashboard() {
         margin: '0 auto',
         padding: '2rem 2rem 4rem'
       }}>
+        {/* Greeting */}
         <div style={{ marginBottom: '2rem' }}>
           <h2 style={{ fontSize: '1.875rem', fontWeight: '700', color: '#111827', marginBottom: '0.5rem' }}>
             Welcome, {user?.name || user?.given_name || user?.email?.split('@')[0] || 'User'}!
           </h2>
           <p style={{ fontSize: '1rem', color: '#6b7280' }}>
-            Manage your broadband service and account settings
+            Here's your broadband service overview
           </p>
         </div>
-
-        {/* User Profile Card */}
-        <div style={{
-          background: 'white',
-          borderRadius: '8px',
-          padding: '1.5rem',
-          border: '1px solid #e5e7eb',
-          marginBottom: '2rem'
-        }}>
-          <h3 style={{
-            fontSize: '1.125rem',
-            fontWeight: '600',
-            color: '#111827',
-            marginBottom: '1.25rem'
-          }}>
-            Profile Information
-          </h3>
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
-            gap: '1.5rem'
-          }}>
-            {user?.name && (
-              <div>
-                <p style={{ color: '#6b7280', fontSize: '0.875rem', marginBottom: '0.25rem' }}>Full Name</p>
-                <p style={{ color: '#111827', fontSize: '1.1rem', fontWeight: '600' }}>
-                  {user.name}
-                </p>
-              </div>
-            )}
-            {user?.email && (
-              <div>
-                <p style={{ color: '#6b7280', fontSize: '0.875rem', marginBottom: '0.25rem' }}>Email Address</p>
-                <p style={{ color: '#111827', fontSize: '1.1rem', fontWeight: '600' }}>
-                  {user.email}
-                </p>
-              </div>
-            )}
-            {user?.sub && (
-              <div>
-                <p style={{ color: '#6b7280', fontSize: '0.875rem', marginBottom: '0.25rem' }}>User ID</p>
-                <p style={{ color: '#111827', fontSize: '0.875rem', fontWeight: '600', fontFamily: 'monospace' }}>
-                  {user.sub.substring(0, 30)}...
-                </p>
-              </div>
-            )}
-            {user?.realm && (
-              <div>
-                <p style={{ color: '#6b7280', fontSize: '0.875rem', marginBottom: '0.25rem' }}>Realm</p>
-                <p style={{ color: '#111827', fontSize: '1.1rem', fontWeight: '600' }}>
-                  {user.realm}
-                </p>
-              </div>
-            )}
-            {user?.city && (
-              <div>
-                <p style={{ color: '#6b7280', fontSize: '0.875rem', marginBottom: '0.25rem' }}>City</p>
-                <p style={{ color: '#111827', fontSize: '1.1rem', fontWeight: '600' }}>
-                  {user.city}
-                </p>
-              </div>
-            )}
-            {user?.address?.locality && (
-              <div>
-                <p style={{ color: '#6b7280', fontSize: '0.875rem', marginBottom: '0.25rem' }}>City</p>
-                <p style={{ color: '#111827', fontSize: '1.1rem', fontWeight: '600' }}>
-                  {user.address.locality}
-                </p>
-              </div>
-            )}
-          </div>
-        </div>
-
-        {/* Groups Section */}
-        {(user?.groups || user?.group) && (
-          <div style={{
-            background: 'white',
-            borderRadius: '8px',
-            padding: '1.5rem',
-            border: '1px solid #e5e7eb',
-            marginBottom: '2rem'
-          }}>
-            <h3 style={{
-              fontSize: '1.125rem',
-              fontWeight: '600',
-              color: '#111827',
-              marginBottom: '1rem'
-            }}>
-              Groups & Roles
-            </h3>
-            <div style={{
-              display: 'flex',
-              flexWrap: 'wrap',
-              gap: '0.5rem'
-            }}>
-              {(Array.isArray(user.groups) ? user.groups : Array.isArray(user.group) ? user.group : [user.groups || user.group]).map((group, index) => (
-                <span
-                  key={index}
-                  style={{
-                    background: '#f3f4f6',
-                    color: '#374151',
-                    padding: '0.5rem 1rem',
-                    borderRadius: '6px',
-                    fontSize: '0.875rem',
-                    fontWeight: '500',
-                    border: '1px solid #e5e7eb'
-                  }}
-                >
-                  {typeof group === 'string' ? group : group.name || group._id || JSON.stringify(group)}
-                </span>
-              ))}
-            </div>
-          </div>
-        )}
         {/* Plan Banner */}
         {planDetails ? (
           <div style={{
@@ -350,6 +237,104 @@ function Dashboard() {
           />
         </div>
 
+        {/* User Profile Card */}
+        <div style={{
+          background: 'white',
+          borderRadius: '8px',
+          padding: '1.5rem',
+          border: '1px solid #e5e7eb',
+          marginBottom: '2rem'
+        }}>
+          <h3 style={{
+            fontSize: '1.125rem',
+            fontWeight: '600',
+            color: '#111827',
+            marginBottom: '1.25rem'
+          }}>
+            Profile Information
+          </h3>
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+            gap: '1.5rem'
+          }}>
+            {user?.name && (
+              <div>
+                <p style={{ color: '#6b7280', fontSize: '0.875rem', marginBottom: '0.25rem' }}>Full Name</p>
+                <p style={{ color: '#111827', fontSize: '1.1rem', fontWeight: '600' }}>
+                  {user.name}
+                </p>
+              </div>
+            )}
+            {user?.email && (
+              <div>
+                <p style={{ color: '#6b7280', fontSize: '0.875rem', marginBottom: '0.25rem' }}>Email Address</p>
+                <p style={{ color: '#111827', fontSize: '1.1rem', fontWeight: '600' }}>
+                  {user.email}
+                </p>
+              </div>
+            )}
+            {user?.sub && (
+              <div>
+                <p style={{ color: '#6b7280', fontSize: '0.875rem', marginBottom: '0.25rem' }}>User ID</p>
+                <p style={{ color: '#111827', fontSize: '0.875rem', fontWeight: '600', fontFamily: 'monospace' }}>
+                  {user.sub.substring(0, 30)}...
+                </p>
+              </div>
+            )}
+            {user?.realm && (
+              <div>
+                <p style={{ color: '#6b7280', fontSize: '0.875rem', marginBottom: '0.25rem' }}>Realm</p>
+                <p style={{ color: '#111827', fontSize: '1.1rem', fontWeight: '600' }}>
+                  {user.realm}
+                </p>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Groups Section */}
+        {(user?.groups || user?.group) && (
+          <div style={{
+            background: 'white',
+            borderRadius: '8px',
+            padding: '1.5rem',
+            border: '1px solid #e5e7eb',
+            marginBottom: '2rem'
+          }}>
+            <h3 style={{
+              fontSize: '1.125rem',
+              fontWeight: '600',
+              color: '#111827',
+              marginBottom: '1rem'
+            }}>
+              Groups & Roles
+            </h3>
+            <div style={{
+              display: 'flex',
+              flexWrap: 'wrap',
+              gap: '0.5rem'
+            }}>
+              {(Array.isArray(user.groups) ? user.groups : Array.isArray(user.group) ? user.group : [user.groups || user.group]).map((group, index) => (
+                <span
+                  key={index}
+                  style={{
+                    background: '#f3f4f6',
+                    color: '#374151',
+                    padding: '0.5rem 1rem',
+                    borderRadius: '6px',
+                    fontSize: '0.875rem',
+                    fontWeight: '500',
+                    border: '1px solid #e5e7eb'
+                  }}
+                >
+                  {typeof group === 'string' ? group : group.name || group._id || JSON.stringify(group)}
+                </span>
+              ))}
+            </div>
+          </div>
+        )}
+
         {/* Token Information (for debugging) */}
         <details style={{
           background: 'white',
@@ -385,18 +370,6 @@ function Dashboard() {
             </pre>
           </div>
         </details>
-
-        {/* Quick Actions */}
-        <div style={{
-          background: 'white',
-          borderRadius: '8px',
-          padding: '1.5rem',
-          border: '1px solid #e5e7eb'
-        }}>
-          <div style={{ fontSize: '2.5rem', marginBottom: '1rem' }}>⚙️</div>
-          <h3 style={{ fontSize: '1.3rem', marginBottom: '0.5rem' }}>Settings</h3>
-          <p style={{ opacity: 0.8 }}>Configure your account preferences</p>
-        </div>
       </div>
 
       {/* Raw User Data (for debugging) */}
