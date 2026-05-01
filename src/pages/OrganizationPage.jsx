@@ -47,7 +47,10 @@ function OrganizationPage() {
       console.log('Fetching user organizations...');
       const myOrgs = await getUserOrganizations(userInfo.sub);
       console.log('My organizations:', myOrgs);
+      console.log('My organizations count:', myOrgs.result?.length || 0);
+      console.log('My organizations array:', myOrgs.result);
       setMyOrganizations(myOrgs.result || []);
+      console.log('State updated with organizations:', myOrgs.result?.length || 0);
       
       // Load pending invitations
       console.log('Fetching pending invitations...');
@@ -331,6 +334,25 @@ function OrganizationPage() {
                 <h2 style={{ fontSize: '1.25rem', fontWeight: '600', marginBottom: '1rem' }}>
                   My Organizations
                 </h2>
+                
+                {/* Debug Info */}
+                <div style={{
+                  background: '#f0f9ff',
+                  border: '1px solid #bfdbfe',
+                  borderRadius: '6px',
+                  padding: '0.75rem',
+                  marginBottom: '1rem',
+                  fontSize: '0.75rem',
+                  fontFamily: 'monospace'
+                }}>
+                  <strong>Debug:</strong> myOrganizations.length = {myOrganizations.length}
+                  {myOrganizations.length > 0 && (
+                    <div style={{ marginTop: '0.5rem' }}>
+                      Organizations: {myOrganizations.map(o => o.name).join(', ')}
+                    </div>
+                  )}
+                </div>
+                
                 {myOrganizations.length === 0 ? (
                   <div style={{ textAlign: 'center', padding: '3rem', color: '#9ca3af' }}>
                     <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>🏢</div>
