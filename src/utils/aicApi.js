@@ -329,23 +329,38 @@ export const deleteManagedObject = async (objectType, objectId) => {
 
 /**
  * Example: Get current user and their groups
+ * Groups are extracted from the access token, not UserInfo endpoint
  */
 export const getCurrentUserWithGroups = async () => {
   try {
+    // Get user info from UserInfo endpoint
     const userInfo = await getUserInfo();
     console.log('Current user:', userInfo);
     
-    // If user has groups in token, fetch full group details
-    if (userInfo.groups && userInfo.groups.length > 0) {
-      const groupPromises = userInfo.groups.map(groupName => 
-        queryGroups(`name eq "${groupName}"`)
-      );
-      const groups = await Promise.all(groupPromises);
-      console.log('User groups:', groups);
-      return { user: userInfo, groups };
+    // Decode access token to get groups
+    const accessToken = getAccessToken();
+    let groups = [];
+    
+    try {
+      const tokenParts = accessToken.split('.');
+      if (tokenParts.length === 3) {
+        const payload = JSON.parse(atob(tokenParts[1]));
+        console.log('Access token payload:', payload);
+        
+        // Groups are in the access token, not UserInfo
+        groups = payload.groups || [];
+        console.log('Groups from access token:', groups);
+      }
+    } catch (decodeError) {
+      console.error('Error decoding access token:', decodeError);
     }
     
-    return { user: userInfo, groups: [] };
+    // Return user info with groups from token
+    return { 
+      user: userInfo, 
+      groups: groups,
+      note: 'Groups are extracted from access token, not UserInfo endpoint'
+    };
   } catch (error) {
     console.error('Error fetching user with groups:', error);
     throw error;

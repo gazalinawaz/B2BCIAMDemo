@@ -47,6 +47,20 @@ function ApiTestPage() {
           description: 'Check if access token is valid',
           action: () => runApiTest('Token Validation', validateToken),
         },
+        {
+          name: 'Decode Access Token',
+          description: 'Show all claims in access token (including groups)',
+          action: () => runApiTest('Access Token Claims', () => {
+            const accessToken = sessionStorage.getItem('accessToken');
+            if (!accessToken) throw new Error('No access token found');
+            const parts = accessToken.split('.');
+            const payload = JSON.parse(atob(parts[1]));
+            return {
+              ...payload,
+              note: 'Groups are in the access token, not UserInfo endpoint'
+            };
+          }),
+        },
       ]
     },
     {
