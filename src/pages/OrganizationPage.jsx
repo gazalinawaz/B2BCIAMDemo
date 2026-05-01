@@ -126,16 +126,27 @@ function OrganizationPage() {
       setError(null);
       setSuccess(null);
       
-      const userInfo = await getUserInfo();
-      await sendOrganizationInvitation(
-        selectedOrg._id,
-        userInfo.sub,
-        inviteEmail,
-        inviteRole
-      );
+      // Find user by email
+      const { queryUsers } = await import('../utils/aicApi');
+      const filter = `mail eq "${inviteEmail}"`;
+      const userResults = await queryUsers(filter);
       
-      setSuccess(`Invitation sent to ${inviteEmail} for role: ${inviteRole}`);
+      if (!userResults.result || userResults.result.length === 0) {
+        setError(`No user found with email: ${inviteEmail}`);
+        setLoading(false);
+        return;
+      }
+      
+      const invitedUser = userResults.result[0];
+      
+      // Add user directly to organization
+      const { addUserToOrganization } = await import('../utils/organizationApi');
+      await addUserToOrganization(selectedOrg._id, invitedUser._id, inviteRole);
+      
+      setSuccess(`${invitedUser.givenName} ${invitedUser.sn} added to ${selectedOrg.name} as ${inviteRole}`);
       setInviteEmail('');
+      setSearchQuery('');
+      setSearchResults([]);
       
       // Reload data
       await loadData();
@@ -316,8 +327,7 @@ function OrganizationPage() {
             {[
               { id: 'my-orgs', label: '🏢 My Organizations', count: myOrganizations.length },
               { id: 'create', label: '➕ Create Organization', count: null },
-              { id: 'invite', label: '📧 Send Invitation', count: null },
-              { id: 'invitations', label: '📬 Pending Invitations', count: pendingInvitations.length },
+              { id: 'invite', label: '➕ Add Member', count: null },
               { id: 'members', label: '👥 Members', count: orgMembers.length },
             ].map(tab => (
               <button
@@ -505,12 +515,15 @@ function OrganizationPage() {
               </div>
             )}
 
-            {/* Send Invitation Tab */}
+            {/* Add Member Tab */}
             {activeTab === 'invite' && (
               <div>
                 <h2 style={{ fontSize: '1.25rem', fontWeight: '600', marginBottom: '1rem' }}>
-                  Invite User to Organization
+                  Add Member to Organization
                 </h2>
+                <p style={{ fontSize: '0.875rem', color: '#6b7280', marginBottom: '1.5rem' }}>
+                  Search for an existing user and add them to your organization with a specific role.
+                </p>
                 
                 {myOrganizations.length === 0 ? (
                   <div style={{ textAlign: 'center', padding: '3rem', color: '#9ca3af' }}>
@@ -692,68 +705,9 @@ function OrganizationPage() {
                         fontWeight: '500'
                       }}
                     >
-                      {loading ? 'Sending...' : '📧 Send Invitation'}
+                      {loading ? 'Adding...' : '➕ Add Member'}
                     </button>
                   </form>
-                )}
-              </div>
-            )}
-
-            {/* Pending Invitations Tab */}
-            {activeTab === 'invitations' && (
-              <div>
-                <h2 style={{ fontSize: '1.25rem', fontWeight: '600', marginBottom: '1rem' }}>
-                  Pending Invitations
-                </h2>
-                {pendingInvitations.length === 0 ? (
-                  <div style={{ textAlign: 'center', padding: '3rem', color: '#9ca3af' }}>
-                    <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>📬</div>
-                    <p>No pending invitations.</p>
-                  </div>
-                ) : (
-                  <div style={{ display: 'grid', gap: '1rem' }}>
-                    {pendingInvitations.map(invite => (
-                      <div
-                        key={invite._id}
-                        style={{
-                          background: '#fffbeb',
-                          border: '1px solid #fcd34d',
-                          borderRadius: '8px',
-                          padding: '1.5rem'
-                        }}
-                      >
-                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start' }}>
-                          <div style={{ flex: 1 }}>
-                            <h3 style={{ fontSize: '1.125rem', fontWeight: '600', marginBottom: '0.5rem' }}>
-                              Organization Invitation
-                            </h3>
-                            <div style={{ fontSize: '0.875rem', color: '#78350f', marginBottom: '0.5rem' }}>
-                              <p><strong>Role:</strong> {invite.role}</p>
-                              <p><strong>Organization ID:</strong> {invite.organizationId}</p>
-                              <p><strong>Invited by:</strong> {invite.inviterUserId}</p>
-                              <p><strong>Expires:</strong> {new Date(invite.expiryDate).toLocaleDateString()}</p>
-                            </div>
-                          </div>
-                          <button
-                            onClick={() => handleAcceptInvitation(invite._id)}
-                            disabled={loading}
-                            style={{
-                              background: loading ? '#9ca3af' : '#16a34a',
-                              color: 'white',
-                              border: 'none',
-                              padding: '0.5rem 1rem',
-                              borderRadius: '6px',
-                              cursor: loading ? 'not-allowed' : 'pointer',
-                              fontSize: '0.875rem',
-                              fontWeight: '500'
-                            }}
-                          >
-                            ✅ Accept
-                          </button>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
                 )}
               </div>
             )}
