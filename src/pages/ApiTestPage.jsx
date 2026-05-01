@@ -8,6 +8,13 @@ import {
   validateToken,
   queryManagedObjects,
 } from '../utils/aicApi';
+import {
+  createOrganizationWithAdmin,
+  queryOrganizations,
+  getUserOrganizations,
+  sendOrganizationInvitation,
+  getPendingInvitations,
+} from '../utils/organizationApi';
 
 function ApiTestPage() {
   const { user, logout } = useAuth();
@@ -108,6 +115,71 @@ function ApiTestPage() {
           action: () => runApiTest('Organizations', () => 
             queryManagedObjects('alpha_organization', 'true')
           ),
+        },
+      ]
+    },
+    {
+      category: 'Organization Management (Requires Setup)',
+      items: [
+        {
+          name: 'Create Organization',
+          description: 'Create new organization with current user as Org Admin',
+          action: () => runApiTest('Create Organization', async () => {
+            const userInfo = await getUserInfo();
+            return createOrganizationWithAdmin(userInfo.sub, {
+              name: `Test Org ${Date.now()}`,
+              description: 'Created from API test page'
+            });
+          }),
+        },
+        {
+          name: 'Query All Organizations',
+          description: 'Get all organizations in the system',
+          action: () => runApiTest('Query Organizations', () => 
+            queryOrganizations('true')
+          ),
+        },
+        {
+          name: 'Get My Organizations',
+          description: 'Get organizations current user belongs to',
+          action: () => runApiTest('My Organizations', async () => {
+            const userInfo = await getUserInfo();
+            return getUserOrganizations(userInfo.sub);
+          }),
+        },
+        {
+          name: 'Send Invitation',
+          description: 'Invite user to organization (requires org ID)',
+          action: () => runApiTest('Send Invitation', async () => {
+            const userInfo = await getUserInfo();
+            const orgs = await getUserOrganizations(userInfo.sub);
+            
+            if (!orgs.result || orgs.result.length === 0) {
+              throw new Error('You must create an organization first');
+            }
+            
+            const orgId = orgs.result[0]._id;
+            const inviteeEmail = prompt('Enter email to invite:');
+            
+            if (!inviteeEmail) {
+              throw new Error('Email is required');
+            }
+            
+            return sendOrganizationInvitation(
+              orgId,
+              userInfo.sub,
+              inviteeEmail,
+              'Customer Port Admin'
+            );
+          }),
+        },
+        {
+          name: 'Get Pending Invitations',
+          description: 'Get invitations for current user email',
+          action: () => runApiTest('Pending Invitations', async () => {
+            const userInfo = await getUserInfo();
+            return getPendingInvitations(userInfo.email);
+          }),
         },
       ]
     }
