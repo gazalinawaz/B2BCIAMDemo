@@ -372,28 +372,6 @@ function Dashboard() {
         </details>
       </div>
 
-      {/* Raw User Data (for debugging) */}
-      <details style={{
-        background: 'rgba(255, 255, 255, 0.1)',
-        backdropFilter: 'blur(10px)',
-        borderRadius: '16px',
-        padding: '1.5rem',
-        color: 'white'
-      }}>
-        <summary style={{ cursor: 'pointer', fontWeight: 'bold', marginBottom: '1rem' }}>
-          View Raw User Data (Debug)
-        </summary>
-        <pre style={{
-          background: 'rgba(0, 0, 0, 0.3)',
-          padding: '1rem',
-          borderRadius: '8px',
-          overflow: 'auto',
-          fontSize: '0.9rem'
-        }}>
-          {JSON.stringify(user, null, 2)}
-        </pre>
-      </details>
-
       <style>{`
         @keyframes spin {
           0% { transform: rotate(0deg); }
