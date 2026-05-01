@@ -664,39 +664,42 @@ function OrganizationPage() {
                   </div>
                 ) : (
                   <div style={{ display: 'grid', gap: '1rem' }}>
-                    {orgMembers.map((member, index) => (
-                      <div
-                        key={index}
-                        style={{
-                          background: '#f9fafb',
-                          border: '1px solid #e5e7eb',
-                          borderRadius: '8px',
-                          padding: '1rem',
-                          display: 'flex',
-                          justifyContent: 'space-between',
-                          alignItems: 'center'
-                        }}
-                      >
-                        <div>
-                          <p style={{ fontSize: '0.875rem', fontWeight: '500', marginBottom: '0.25rem' }}>
-                            {member._ref.split('/').pop()}
-                          </p>
-                          <p style={{ fontSize: '0.75rem', color: '#6b7280' }}>
-                            {member._ref}
-                          </p>
+                    {orgMembers.map((member, index) => {
+                      const role = member._refProperties?.role || 'Member';
+                      return (
+                        <div
+                          key={index}
+                          style={{
+                            background: '#f9fafb',
+                            border: '1px solid #e5e7eb',
+                            borderRadius: '8px',
+                            padding: '1rem',
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            alignItems: 'center'
+                          }}
+                        >
+                          <div>
+                            <p style={{ fontSize: '0.875rem', fontWeight: '500', marginBottom: '0.25rem' }}>
+                              {member._ref.split('/').pop()}
+                            </p>
+                            <p style={{ fontSize: '0.75rem', color: '#6b7280' }}>
+                              {member._ref}
+                            </p>
+                          </div>
+                          <span style={{
+                            background: role === 'Org Admin' ? '#667eea' : '#10b981',
+                            color: 'white',
+                            padding: '0.25rem 0.75rem',
+                            borderRadius: '12px',
+                            fontSize: '0.75rem',
+                            fontWeight: '500'
+                          }}>
+                            {role}
+                          </span>
                         </div>
-                        <span style={{
-                          background: member.role === 'Org Admin' ? '#667eea' : '#10b981',
-                          color: 'white',
-                          padding: '0.25rem 0.75rem',
-                          borderRadius: '12px',
-                          fontSize: '0.75rem',
-                          fontWeight: '500'
-                        }}>
-                          {member.role}
-                        </span>
-                      </div>
-                    ))}
+                      );
+                    })}
                   </div>
                 )}
               </div>

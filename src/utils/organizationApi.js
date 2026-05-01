@@ -102,13 +102,17 @@ export const deleteOrganization = async (orgId) => {
 export const addUserToOrganization = async (orgId, userId, role = 'Member') => {
   const realm = getRealm();
   
+  // Use the correct relationship structure for alpha_organization
+  // The members property uses _refProperties for additional data like role
   const operations = [
     {
       operation: 'add',
       field: '/members/-',
       value: {
         _ref: `managed/${realm}_user/${userId}`,
-        role: role
+        _refProperties: {
+          role: role
+        }
       }
     }
   ];
@@ -162,7 +166,7 @@ export const updateUserRole = async (orgId, userId, newRole) => {
   const operations = [
     {
       operation: 'replace',
-      field: `/members/${memberIndex}/role`,
+      field: `/members/${memberIndex}/_refProperties/role`,
       value: newRole
     }
   ];
@@ -346,7 +350,7 @@ export const isOrgAdmin = async (orgId, userId) => {
   const org = await getOrganization(orgId);
   
   const member = org.members?.find(m => m._ref === `managed/${realm}_user/${userId}`);
-  return member?.role === 'Org Admin';
+  return member?._refProperties?.role === 'Org Admin';
 };
 
 /**
@@ -359,5 +363,5 @@ export const getUserRoleInOrganization = async (orgId, userId) => {
   const org = await getOrganization(orgId);
   
   const member = org.members?.find(m => m._ref === `managed/${realm}_user/${userId}`);
-  return member?.role || null;
+  return member?._refProperties?.role || null;
 };
