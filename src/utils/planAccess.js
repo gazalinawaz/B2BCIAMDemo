@@ -101,8 +101,8 @@ export const getUserPlan = (user) => {
     }
   }
   
-  // Default to simple plan if no plan found
-  return plan?.toLowerCase() || PLANS.SIMPLE;
+  // Return null if no plan found (user has no active plan)
+  return plan?.toLowerCase() || null;
 };
 
 /**
