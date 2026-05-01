@@ -2,13 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import {
   createOrganizationWithAdmin,
-  queryOrganizations,
   getUserOrganizations,
-  sendOrganizationInvitation,
-  getPendingInvitations,
-  acceptInvitation,
+  queryOrganizations,
   getOrganizationMembers,
-  getOrganization,
 } from '../utils/organizationApi';
 import { getUserInfo } from '../utils/aicApi';
 
@@ -22,7 +18,6 @@ function OrganizationPage() {
   // Organization data
   const [myOrganizations, setMyOrganizations] = useState([]);
   const [allOrganizations, setAllOrganizations] = useState([]);
-  const [pendingInvitations, setPendingInvitations] = useState([]);
   const [selectedOrg, setSelectedOrg] = useState(null);
   const [orgMembers, setOrgMembers] = useState([]);
   
@@ -54,12 +49,6 @@ function OrganizationPage() {
       console.log('My organizations array:', myOrgs.result);
       setMyOrganizations(myOrgs.result || []);
       console.log('State updated with organizations:', myOrgs.result?.length || 0);
-      
-      // Load pending invitations
-      console.log('Fetching pending invitations...');
-      const invites = await getPendingInvitations(userInfo.email);
-      console.log('Pending invitations:', invites);
-      setPendingInvitations(invites.result || []);
       
       // Try to load all organizations (requires admin)
       try {
@@ -147,26 +136,6 @@ function OrganizationPage() {
       setInviteEmail('');
       setSearchQuery('');
       setSearchResults([]);
-      
-      // Reload data
-      await loadData();
-    } catch (err) {
-      setError(err.message);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleAcceptInvitation = async (invitationId) => {
-    try {
-      setLoading(true);
-      setError(null);
-      setSuccess(null);
-      
-      const userInfo = await getUserInfo();
-      const result = await acceptInvitation(invitationId, userInfo.sub);
-      
-      setSuccess('Invitation accepted! You are now a member of the organization.');
       
       // Reload data
       await loadData();
