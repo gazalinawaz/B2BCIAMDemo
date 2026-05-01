@@ -1,11 +1,17 @@
 import React from 'react'
 import { useAuth } from '../contexts/AuthContext'
+import { getUserPlanDetails } from '../utils/planAccess'
+import FeatureCard from '../components/FeatureCard'
 
 function Dashboard() {
   const { user, logout, isLoading } = useAuth()
   
+  // Get user's plan details for authorization
+  const planDetails = user ? getUserPlanDetails(user) : null
+  
   // Debug logging
   console.log('Dashboard - User data:', user)
+  console.log('Dashboard - User plan:', planDetails)
   console.log('Dashboard - Is loading:', isLoading)
 
   if (isLoading) {
@@ -212,47 +218,136 @@ function Dashboard() {
             </div>
           </div>
         )}
-        {/* Stats Grid */}
+        {/* Plan Banner */}
+        {planDetails ? (
+          <div style={{
+            background: planDetails.color,
+            backgroundImage: 'linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 100%)',
+            borderRadius: '12px',
+            padding: '2rem',
+            marginBottom: '2rem',
+            color: 'white',
+            boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
+          }}>
+            <div style={{ marginBottom: '1.5rem' }}>
+              <p style={{ fontSize: '0.875rem', opacity: 0.9, marginBottom: '0.5rem', fontWeight: '600' }}>
+                YOUR CURRENT PLAN
+              </p>
+              <h2 style={{ fontSize: '2.5rem', fontWeight: '700', marginBottom: '0.5rem' }}>
+                {planDetails.name}
+              </h2>
+              <p style={{ fontSize: '1.25rem', opacity: 0.9 }}>
+                {planDetails.speed} • {planDetails.price}
+              </p>
+              <p style={{ fontSize: '1rem', opacity: 0.85, marginTop: '0.5rem' }}>
+                ✨ You have purchased the <strong>{planDetails.name}</strong> package
+              </p>
+            </div>
+            
+            <div style={{
+              background: 'rgba(255,255,255,0.15)',
+              borderRadius: '8px',
+              padding: '1rem',
+              backdropFilter: 'blur(10px)'
+            }}>
+              <p style={{ fontSize: '0.875rem', fontWeight: '600', marginBottom: '0.75rem' }}>
+                ✓ Included Features:
+              </p>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '0.5rem' }}>
+                {planDetails.features.map((feature, index) => (
+                  <div key={index} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                    <span>✓</span>
+                    <span style={{ fontSize: '0.875rem' }}>{feature}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        ) : (
+          <div style={{
+            background: '#fef3c7',
+            border: '2px solid #f59e0b',
+            borderRadius: '12px',
+            padding: '2rem',
+            marginBottom: '2rem',
+            textAlign: 'center'
+          }}>
+            <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>⚠️</div>
+            <h2 style={{ fontSize: '1.5rem', fontWeight: '700', color: '#92400e', marginBottom: '0.5rem' }}>
+              No Active Plan
+            </h2>
+            <p style={{ fontSize: '1rem', color: '#78350f' }}>
+              You don't have any active broadband plan. Please contact support to subscribe.
+            </p>
+          </div>
+        )}
+
+        {/* Feature Access Grid */}
+        <h3 style={{
+          fontSize: '1.25rem',
+          fontWeight: '600',
+          color: '#111827',
+          marginBottom: '0.5rem'
+        }}>
+          Available Features
+        </h3>
+        <p style={{ fontSize: '0.875rem', color: '#6b7280', marginBottom: '1.5rem' }}>
+          🔐 Features shown based on your plan authorization
+        </p>
+        
         <div style={{
           display: 'grid',
           gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
           gap: '1.5rem',
           marginBottom: '2rem'
         }}>
-          {[
-            { title: 'Current Plan', value: '500 Mbps', subtitle: 'Fiber Broadband' },
-            { title: 'Data Usage', value: '245 GB', subtitle: 'This month' },
-            { title: 'Next Billing', value: '$49.99', subtitle: 'Due May 15, 2024' }
-          ].map((stat, i) => (
-            <div key={i} style={{
-              background: 'white',
-              borderRadius: '8px',
-              padding: '1.5rem',
-              border: '1px solid #e5e7eb'
-            }}>
-              <p style={{
-                fontSize: '0.875rem',
-                fontWeight: '500',
-                color: '#6b7280',
-                marginBottom: '0.75rem',
-                textTransform: 'uppercase',
-                letterSpacing: '0.5px'
-              }}>
-                {stat.title}
-              </p>
-              <p style={{
-                fontSize: '2rem',
-                fontWeight: '700',
-                color: '#111827',
-                marginBottom: '0.25rem'
-              }}>
-                {stat.value}
-              </p>
-              <p style={{ color: '#9ca3af', fontSize: '0.875rem' }}>
-                {stat.subtitle}
-              </p>
-            </div>
-          ))}
+          <FeatureCard
+            title="Usage Dashboard"
+            description="View your data usage and connection statistics"
+            icon="📊"
+            requiredFeature={null}
+            onClick={() => alert('✅ Access Granted: Opening Usage Dashboard...')}
+          />
+          
+          <FeatureCard
+            title="Billing Management"
+            description="Manage payments, invoices, and billing history"
+            icon="💳"
+            requiredFeature="canAccessBilling"
+            onClick={() => alert('✅ Access Granted: Opening Billing Management...')}
+          />
+          
+          <FeatureCard
+            title="Advanced Settings"
+            description="Configure network settings and security options"
+            icon="⚙️"
+            requiredFeature="canAccessAdvancedSettings"
+            onClick={() => alert('✅ Access Granted: Opening Advanced Settings...')}
+          />
+          
+          <FeatureCard
+            title="Priority Support"
+            description="24/7 priority customer support and live chat"
+            icon="🎧"
+            requiredFeature="canAccessPrioritySupport"
+            onClick={() => alert('✅ Access Granted: Opening Priority Support...')}
+          />
+          
+          <FeatureCard
+            title="Analytics & Reports"
+            description="Detailed analytics and usage reports"
+            icon="📈"
+            requiredFeature="canAccessAnalytics"
+            onClick={() => alert('✅ Access Granted: Opening Analytics...')}
+          />
+          
+          <FeatureCard
+            title="API Access"
+            description="Developer API for custom integrations"
+            icon="🔌"
+            requiredFeature="canAccessAdvancedSettings"
+            onClick={() => alert('✅ Access Granted: Opening API Documentation...')}
+          />
         </div>
 
         {/* Token Information (for debugging) */}
