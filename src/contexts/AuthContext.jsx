@@ -47,8 +47,9 @@ export function AuthProvider({ children }) {
           
           console.log('Tokens stored successfully');
           
-          // Clean URL
-          window.history.replaceState(null, '', window.location.pathname);
+          // Clear hash from URL and redirect to dashboard
+          window.history.replaceState(null, '', '/dashboard');
+          window.location.href = '/dashboard';
           
           // Get user info
           await checkAuth();
