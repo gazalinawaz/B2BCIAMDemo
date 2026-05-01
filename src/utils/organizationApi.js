@@ -62,7 +62,11 @@ export const getUserOrganizations = async (userId) => {
   const realm = getRealm();
   // Query organizations where user is a member
   const filter = `members/_ref eq "managed/${realm}_user/${userId}"`;
-  return queryOrganizations(filter);
+  console.log('getUserOrganizations - userId:', userId);
+  console.log('getUserOrganizations - filter:', filter);
+  const result = await queryOrganizations(filter);
+  console.log('getUserOrganizations - result:', result);
+  return result;
 };
 
 /**
@@ -296,11 +300,18 @@ export const getSentInvitations = async (userId) => {
 export const createOrganizationWithAdmin = async (userId, orgData) => {
   const realm = getRealm();
   
+  console.log('createOrganizationWithAdmin - userId:', userId);
+  console.log('createOrganizationWithAdmin - orgData:', orgData);
+  
   // Create organization
+  console.log('Creating organization...');
   const org = await createOrganization(orgData);
+  console.log('Organization created:', org);
   
   // Add creator as Org Admin
+  console.log('Adding user as Org Admin...');
   await addUserToOrganization(org._id, userId, 'Org Admin');
+  console.log('User added as Org Admin');
   
   return {
     organization: org,

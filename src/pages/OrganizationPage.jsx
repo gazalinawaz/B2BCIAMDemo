@@ -39,26 +39,35 @@ function OrganizationPage() {
   const loadData = async () => {
     try {
       setLoading(true);
+      console.log('Loading data...');
       const userInfo = await getUserInfo();
+      console.log('User info:', userInfo);
       
       // Load my organizations
+      console.log('Fetching user organizations...');
       const myOrgs = await getUserOrganizations(userInfo.sub);
+      console.log('My organizations:', myOrgs);
       setMyOrganizations(myOrgs.result || []);
       
       // Load pending invitations
+      console.log('Fetching pending invitations...');
       const invites = await getPendingInvitations(userInfo.email);
+      console.log('Pending invitations:', invites);
       setPendingInvitations(invites.result || []);
       
       // Try to load all organizations (requires admin)
       try {
+        console.log('Fetching all organizations...');
         const allOrgs = await queryOrganizations('true');
+        console.log('All organizations:', allOrgs);
         setAllOrganizations(allOrgs.result || []);
       } catch (err) {
-        console.log('Cannot load all organizations (admin required)');
+        console.log('Cannot load all organizations (admin required):', err.message);
       }
       
       setError(null);
     } catch (err) {
+      console.error('Error loading data:', err);
       setError(err.message);
     } finally {
       setLoading(false);
@@ -72,20 +81,27 @@ function OrganizationPage() {
       setError(null);
       setSuccess(null);
       
+      console.log('Creating organization...');
       const userInfo = await getUserInfo();
+      console.log('User info:', userInfo);
+      
       const result = await createOrganizationWithAdmin(userInfo.sub, {
         name: newOrgName,
         description: newOrgDescription,
       });
       
+      console.log('Organization created:', result);
       setSuccess(`Organization "${newOrgName}" created successfully! You are now the Org Admin.`);
       setNewOrgName('');
       setNewOrgDescription('');
       
       // Reload data
+      console.log('Reloading data...');
       await loadData();
+      console.log('Data reloaded, switching to my-orgs tab');
       setActiveTab('my-orgs');
     } catch (err) {
+      console.error('Error creating organization:', err);
       setError(err.message);
     } finally {
       setLoading(false);
