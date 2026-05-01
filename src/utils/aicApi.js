@@ -231,18 +231,28 @@ export const getUserInfo = async () => {
 };
 
 /**
- * Validate access token
+ * Validate access token by calling UserInfo endpoint
+ * Note: Token introspection endpoint requires client credentials,
+ * which are not available in Implicit Flow. Instead, we validate
+ * by successfully calling the UserInfo endpoint.
  */
 export const validateToken = async () => {
-  const accessToken = getAccessToken();
-  const realm = getRealm();
-  return callAicApi(`/am/oauth2/realms/${realm}/introspect`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/x-www-form-urlencoded',
-    },
-    body: `token=${accessToken}`,
-  });
+  try {
+    const userInfo = await getUserInfo();
+    return {
+      active: true,
+      valid: true,
+      message: 'Token is valid - UserInfo endpoint responded successfully',
+      userInfo: userInfo
+    };
+  } catch (error) {
+    return {
+      active: false,
+      valid: false,
+      message: 'Token is invalid or expired',
+      error: error.message
+    };
+  }
 };
 
 /**
