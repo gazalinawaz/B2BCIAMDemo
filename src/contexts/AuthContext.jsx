@@ -178,27 +178,12 @@ export function AuthProvider({ children }) {
   };
 
   const logout = () => {
-    try {
-      const config = Config.get();
-      
-      const logout = () => {
-        sessionStorage.removeItem('accessToken');
-        sessionStorage.removeItem('idToken');
-        setUser(null);
-        setIsAuthenticated(false);
-        // Redirect to landing page
-        window.location.href = '/';
-      };    
-      // Redirect to PingOne AIC logout
-      const idToken = sessionStorage.getItem('idToken');
-      const logoutUrl = `${config.serverConfig.baseUrl}/am/oauth2/realms/${config.realmPath}/connect/endSession?id_token_hint=${idToken}&post_logout_redirect_uri=${config.redirectUri}`;
-      window.location.href = logoutUrl;
-    } catch (error) {
-      console.error('Logout error:', error);
-      // Fallback: just clear and redirect
-      sessionStorage.clear();
-      window.location.href = '/';
-    }
+    sessionStorage.removeItem('accessToken');
+    sessionStorage.removeItem('idToken');
+    setUser(null);
+    setIsAuthenticated(false);
+    // Redirect to landing page
+    window.location.href = '/';
   };
 
   const value = {
