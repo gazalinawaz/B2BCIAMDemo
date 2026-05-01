@@ -63,6 +63,21 @@ function Dashboard() {
           </div>
           <div style={{ display: 'flex', gap: '1rem' }}>
             <button
+              onClick={() => window.location.href = '/profile'}
+              style={{
+                background: '#8b5cf6',
+                color: 'white',
+                border: 'none',
+                padding: '0.625rem 1.25rem',
+                borderRadius: '6px',
+                cursor: 'pointer',
+                fontWeight: '500',
+                fontSize: '0.95rem'
+              }}
+            >
+              👤 My Profile
+            </button>
+            <button
               onClick={() => window.location.href = '/organizations'}
               style={{
                 background: '#10b981',
@@ -95,8 +110,9 @@ function Dashboard() {
             <button
               onClick={logout}
               style={{
-                background: 'white',
-                color: '#374151',
+                background: '#ef4444',
+                color: 'white',
+                border: 'none',
                 border: '1px solid #d1d5db',
                 padding: '0.625rem 1.25rem',
                 borderRadius: '6px',

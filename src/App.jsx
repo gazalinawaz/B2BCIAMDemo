@@ -6,6 +6,7 @@ import LandingPage from './pages/LandingPage'
 import Dashboard from './pages/Dashboard'
 import ApiTestPage from './pages/ApiTestPage'
 import OrganizationPage from './pages/OrganizationPage'
+import ProfilePage from './pages/ProfilePage'
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/api-test" element={<ApiTestPage />} />
           <Route path="/organizations" element={<OrganizationPage />} />
+          <Route path="/profile" element={<ProfilePage />} />
         </Routes>
       </BrowserRouter>
     </AuthProvider>
