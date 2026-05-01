@@ -61,21 +61,38 @@ function Dashboard() {
               {user?.email || 'User Account'}
             </p>
           </div>
-          <button
-            onClick={logout}
-            style={{
-              background: 'white',
-              color: '#374151',
-              border: '1px solid #d1d5db',
-              padding: '0.625rem 1.25rem',
-              borderRadius: '6px',
-              cursor: 'pointer',
-              fontWeight: '500',
-              fontSize: '0.95rem'
-            }}
-          >
-            Sign Out
-          </button>
+          <div style={{ display: 'flex', gap: '1rem' }}>
+            <button
+              onClick={() => window.location.href = '/api-test'}
+              style={{
+                background: '#667eea',
+                color: 'white',
+                border: 'none',
+                padding: '0.625rem 1.25rem',
+                borderRadius: '6px',
+                cursor: 'pointer',
+                fontWeight: '500',
+                fontSize: '0.95rem'
+              }}
+            >
+              🧪 Test APIs
+            </button>
+            <button
+              onClick={logout}
+              style={{
+                background: 'white',
+                color: '#374151',
+                border: '1px solid #d1d5db',
+                padding: '0.625rem 1.25rem',
+                borderRadius: '6px',
+                cursor: 'pointer',
+                fontWeight: '500',
+                fontSize: '0.95rem'
+              }}
+            >
+              Sign Out
+            </button>
+          </div>
         </div>
       </div>
 
