@@ -6,7 +6,15 @@ import LandingPage from './pages/LandingPage'
 import Dashboard from './pages/Dashboard'
 
 function MainPage() {
-  const { isAuthenticated, isLoading } = useAuth()
+  const auth = useAuth()
+  
+  // Add safety check
+  if (!auth) {
+    console.error('Auth context is null')
+    return <LandingPage />
+  }
+  
+  const { isAuthenticated, isLoading } = auth
   
   if (isLoading) {
     return null // Let AuthContext handle loading state
