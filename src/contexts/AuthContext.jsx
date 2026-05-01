@@ -177,17 +177,13 @@ export function AuthProvider({ children }) {
   };
 
   const logout = () => {
-    // Clear state immediately
-    setUser(null);
-    setIsAuthenticated(false);
-    setIsLoading(true); // Show loading to prevent flash
-    
-    // Clear tokens
+    // Clear tokens first
     sessionStorage.removeItem('accessToken');
     sessionStorage.removeItem('idToken');
     
-    // Redirect immediately
-    window.location.href = '/';
+    // Redirect immediately - this will reload the page
+    // No need to update state since page is reloading
+    window.location.replace('/');
   };
 
   const value = {
