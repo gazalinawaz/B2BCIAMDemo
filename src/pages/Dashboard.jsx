@@ -21,26 +21,20 @@ function Dashboard() {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
+        background: '#f9fafb'
       }}>
-        <div style={{ textAlign: 'center', color: 'white' }}>
+        <div style={{ textAlign: 'center' }}>
           <div style={{
             width: '60px',
             height: '60px',
-            border: '5px solid rgba(255,255,255,0.2)',
-            borderTop: '5px solid white',
+            border: '5px solid #e5e7eb',
+            borderTop: '5px solid #667eea',
             borderRadius: '50%',
-            animation: 'spin 1s linear infinite',
+            animation: 'spin 0.8s linear infinite',
             margin: '0 auto 1.5rem'
           }}></div>
-          <p style={{ fontSize: '1.2rem', fontWeight: '600' }}>Loading your dashboard...</p>
+          <p style={{ color: '#6b7280', fontSize: '1rem', fontWeight: '500' }}>Loading your dashboard...</p>
         </div>
-        <style>{`
-          @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-          }
-        `}</style>
       </div>
     )
   }
