@@ -35,53 +35,68 @@ function ApiTestPage() {
 
   const tests = [
     {
-      name: 'Get UserInfo',
-      description: 'Fetch current user information from UserInfo endpoint',
-      action: () => runApiTest('UserInfo', getUserInfo),
+      category: 'Basic (Should Work)',
+      items: [
+        {
+          name: 'Get UserInfo',
+          description: 'Fetch current user information from UserInfo endpoint',
+          action: () => runApiTest('UserInfo', getUserInfo),
+        },
+        {
+          name: 'Validate Token',
+          description: 'Check if access token is valid',
+          action: () => runApiTest('Token Validation', validateToken),
+        },
+      ]
     },
     {
-      name: 'Validate Token',
-      description: 'Check if access token is valid',
-      action: () => runApiTest('Token Validation', validateToken),
+      category: 'User & Group Queries (May Require Admin)',
+      items: [
+        {
+          name: 'Get Current User with Groups',
+          description: 'Fetch user info and expand group details',
+          action: () => runApiTest('User with Groups', getCurrentUserWithGroups),
+        },
+        {
+          name: 'Query All Users',
+          description: 'Get all users in the realm (requires admin/IDM access)',
+          action: () => runApiTest('All Users', () => 
+            queryUsers('true', 'userName,mail,givenName,sn')
+          ),
+        },
+        {
+          name: 'Search Users by Email',
+          description: 'Find users with @example.com email (requires admin)',
+          action: () => runApiTest('Search Users', () => 
+            queryUsers('mail co "example.com"', 'userName,mail')
+          ),
+        },
+        {
+          name: 'Query All Groups',
+          description: 'Get all groups in the realm (requires admin)',
+          action: () => runApiTest('All Groups', () => queryGroups('true')),
+        },
+        {
+          name: 'Search Broadband Groups',
+          description: 'Find groups with "broadband" in name (requires admin)',
+          action: () => runApiTest('Broadband Groups', () => 
+            queryGroups('name co "broadband"')
+          ),
+        },
+      ]
     },
     {
-      name: 'Get Current User with Groups',
-      description: 'Fetch user info and expand group details',
-      action: () => runApiTest('User with Groups', getCurrentUserWithGroups),
-    },
-    {
-      name: 'Query All Users',
-      description: 'Get all users in the realm (limited fields)',
-      action: () => runApiTest('All Users', () => 
-        queryUsers('true', 'userName,mail,givenName,sn')
-      ),
-    },
-    {
-      name: 'Search Users by Email Domain',
-      description: 'Find users with @example.com email',
-      action: () => runApiTest('Search Users', () => 
-        queryUsers('mail co "example.com"', 'userName,mail')
-      ),
-    },
-    {
-      name: 'Query All Groups',
-      description: 'Get all groups in the realm',
-      action: () => runApiTest('All Groups', () => queryGroups('true')),
-    },
-    {
-      name: 'Search Broadband Groups',
-      description: 'Find groups with "broadband" in the name',
-      action: () => runApiTest('Broadband Groups', () => 
-        queryGroups('name co "broadband"')
-      ),
-    },
-    {
-      name: 'Query Organizations',
-      description: 'Get all organizations (if available)',
-      action: () => runApiTest('Organizations', () => 
-        queryManagedObjects('alpha_organization', 'true')
-      ),
-    },
+      category: 'Custom Objects (Requires Admin)',
+      items: [
+        {
+          name: 'Query Organizations',
+          description: 'Get all organizations (requires admin access)',
+          action: () => runApiTest('Organizations', () => 
+            queryManagedObjects('alpha_organization', 'true')
+          ),
+        },
+      ]
+    }
   ];
 
   return (
@@ -168,49 +183,65 @@ function ApiTestPage() {
             }}>
               Available API Tests
             </h2>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-              {tests.map((test, index) => (
-                <div
-                  key={index}
-                  style={{
-                    background: 'white',
-                    borderRadius: '8px',
-                    padding: '1.25rem',
-                    border: '1px solid #e5e7eb'
-                  }}
-                >
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+              {tests.map((category, catIndex) => (
+                <div key={catIndex}>
                   <h3 style={{
-                    fontSize: '1rem',
-                    fontWeight: '600',
-                    color: '#111827',
-                    marginBottom: '0.5rem'
-                  }}>
-                    {test.name}
-                  </h3>
-                  <p style={{
                     fontSize: '0.875rem',
+                    fontWeight: '600',
                     color: '#6b7280',
-                    marginBottom: '1rem'
+                    marginBottom: '0.75rem',
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.05em'
                   }}>
-                    {test.description}
-                  </p>
-                  <button
-                    onClick={test.action}
-                    disabled={loading}
-                    style={{
-                      background: loading ? '#9ca3af' : '#667eea',
-                      color: 'white',
-                      border: 'none',
-                      padding: '0.625rem 1.25rem',
-                      borderRadius: '6px',
-                      cursor: loading ? 'not-allowed' : 'pointer',
-                      fontWeight: '500',
-                      fontSize: '0.95rem',
-                      width: '100%'
-                    }}
-                  >
-                    {loading ? 'Running...' : 'Run Test'}
-                  </button>
+                    {category.category}
+                  </h3>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                    {category.items.map((test, index) => (
+                      <div
+                        key={index}
+                        style={{
+                          background: 'white',
+                          borderRadius: '8px',
+                          padding: '1rem',
+                          border: '1px solid #e5e7eb'
+                        }}
+                      >
+                        <h4 style={{
+                          fontSize: '0.95rem',
+                          fontWeight: '600',
+                          color: '#111827',
+                          marginBottom: '0.5rem'
+                        }}>
+                          {test.name}
+                        </h4>
+                        <p style={{
+                          fontSize: '0.8rem',
+                          color: '#6b7280',
+                          marginBottom: '0.75rem'
+                        }}>
+                          {test.description}
+                        </p>
+                        <button
+                          onClick={test.action}
+                          disabled={loading}
+                          style={{
+                            background: loading ? '#9ca3af' : '#667eea',
+                            color: 'white',
+                            border: 'none',
+                            padding: '0.5rem 1rem',
+                            borderRadius: '6px',
+                            cursor: loading ? 'not-allowed' : 'pointer',
+                            fontWeight: '500',
+                            fontSize: '0.875rem',
+                            width: '100%'
+                          }}
+                        >
+                          {loading ? 'Running...' : 'Run Test'}
+                        </button>
+                      </div>
+                    ))}
+                  </div>
                 </div>
               ))}
             </div>
@@ -264,9 +295,17 @@ function ApiTestPage() {
                   }}>
                     ❌ Error
                   </h3>
-                  <p style={{ fontSize: '0.875rem', color: '#991b1b' }}>
+                  <pre style={{
+                    fontSize: '0.8rem',
+                    color: '#991b1b',
+                    whiteSpace: 'pre-wrap',
+                    wordBreak: 'break-word',
+                    fontFamily: 'system-ui, -apple-system, sans-serif',
+                    margin: 0,
+                    lineHeight: '1.5'
+                  }}>
                     {error}
-                  </p>
+                  </pre>
                 </div>
               )}
 

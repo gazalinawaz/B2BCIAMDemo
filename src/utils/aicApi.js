@@ -60,14 +60,50 @@ export const callAicApi = async (endpoint, options = {}) => {
   };
   
   try {
+    console.log(`Calling API: ${url}`);
     const response = await fetch(url, mergedOptions);
     
     if (!response.ok) {
-      const errorText = await response.text();
-      throw new Error(`API call failed: ${response.status} ${response.statusText} - ${errorText}`);
+      let errorText = '';
+      let errorJson = null;
+      
+      try {
+        errorText = await response.text();
+        errorJson = JSON.parse(errorText);
+      } catch (e) {
+        // Error response is not JSON
+      }
+      
+      // Build detailed error message
+      let errorMessage = `API call failed: ${response.status} ${response.statusText}`;
+      
+      if (response.status === 403) {
+        errorMessage += '\n\n🔐 Permission Denied: Your access token does not have sufficient permissions for this operation.';
+        errorMessage += '\n\nPossible reasons:';
+        errorMessage += '\n• Missing required OAuth scopes (e.g., fr:idm:*)';
+        errorMessage += '\n• User lacks admin privileges';
+        errorMessage += '\n• Endpoint requires specific roles/permissions';
+        errorMessage += '\n\n💡 Tip: Some APIs require admin access or special scopes beyond openid/email/profile.';
+      } else if (response.status === 401) {
+        errorMessage += '\n\n🔑 Unauthorized: Access token is invalid or expired.';
+        errorMessage += '\n\n💡 Tip: Try logging out and logging back in.';
+      } else if (response.status === 404) {
+        errorMessage += '\n\n🔍 Not Found: The requested resource does not exist.';
+        errorMessage += '\n\n💡 Tip: Check the endpoint URL and object type.';
+      }
+      
+      if (errorJson) {
+        errorMessage += `\n\nServer response: ${JSON.stringify(errorJson, null, 2)}`;
+      } else if (errorText) {
+        errorMessage += `\n\nServer response: ${errorText}`;
+      }
+      
+      throw new Error(errorMessage);
     }
     
-    return await response.json();
+    const data = await response.json();
+    console.log(`API response:`, data);
+    return data;
   } catch (error) {
     console.error('AIC API Error:', error);
     throw error;
