@@ -93,6 +93,21 @@ function Dashboard() {
               🏢 Organizations
             </button>
             <button
+              onClick={() => window.location.href = '/roles'}
+              style={{
+                background: '#f59e0b',
+                color: 'white',
+                border: 'none',
+                padding: '0.625rem 1.25rem',
+                borderRadius: '6px',
+                cursor: 'pointer',
+                fontWeight: '500',
+                fontSize: '0.95rem'
+              }}
+            >
+              🎭 Roles
+            </button>
+            <button
               onClick={() => window.location.href = '/api-test'}
               style={{
                 background: '#667eea',
@@ -113,7 +128,6 @@ function Dashboard() {
                 background: '#ef4444',
                 color: 'white',
                 border: 'none',
-                border: '1px solid #d1d5db',
                 padding: '0.625rem 1.25rem',
                 borderRadius: '6px',
                 cursor: 'pointer',

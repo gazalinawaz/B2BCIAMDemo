@@ -7,6 +7,7 @@ import Dashboard from './pages/Dashboard'
 import ApiTestPage from './pages/ApiTestPage'
 import OrganizationPage from './pages/OrganizationPage'
 import ProfilePage from './pages/ProfilePage'
+import RolesPage from './pages/RolesPage'
 
 function App() {
   return (
@@ -18,6 +19,7 @@ function App() {
           <Route path="/api-test" element={<ApiTestPage />} />
           <Route path="/organizations" element={<OrganizationPage />} />
           <Route path="/profile" element={<ProfilePage />} />
+          <Route path="/roles" element={<RolesPage />} />
         </Routes>
       </BrowserRouter>
     </AuthProvider>
